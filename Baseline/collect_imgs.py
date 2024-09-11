@@ -1,7 +1,7 @@
 import os                           # Para interactuar con el OS (ej: guardar o abrir carpetas y documentos).
 import cv2                          # Procesamiento de imágenes y video.
 
-DATA_DIR = './prueba'                 # Esta variable guarda la ruta del directorio donde están las fotos.
+DATA_DIR = './data'                 # Esta variable guarda la ruta del directorio donde están las fotos.
 if not os.path.exists(DATA_DIR):    # Revisa si el directorio existe o no, de no existir.
     os.makedirs(DATA_DIR)           # Lo crea.
 
