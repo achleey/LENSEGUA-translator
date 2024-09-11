@@ -1,7 +1,7 @@
 import os                           # Para interactuar con el OS (ej: guardar o abrir carpetas y documentos).
 import cv2                          # Procesamiento de imágenes y video.
 
-DATA_DIR = './data'                 # Esta variable guarda la ruta del directorio donde están las fotos.
+DATA_DIR = './prueba'                 # Esta variable guarda la ruta del directorio donde están las fotos.
 if not os.path.exists(DATA_DIR):    # Revisa si el directorio existe o no, de no existir.
     os.makedirs(DATA_DIR)           # Lo crea.
 
@@ -18,9 +18,11 @@ for j in range(number_of_classes):  # Se recorre de 0 a 3-1.
     done = False
     while True:
         ret, frame = cap.read()     # cap.read lee el objeto cap. Ret indica si se pudo capturar y frame contiene la img.
-        cv2.putText(frame, 'Ready? Press "Q" ! :)', (100, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.3, (0, 255, 0), 3,
-                    cv2.LINE_AA)    # Texto para indicar al usuario que inicie el proceso de captura.
-        cv2.imshow('frame', frame)  # Se muestra el frame al usuario.
+        frame = cv2.flip(frame, 1)
+
+        cv2.putText(frame, 'Ready? Press "Q" !', (100, 90), cv2.FONT_HERSHEY_TRIPLEX, 2, (0, 0, 255), 2,
+                    cv2.LINE_4)    # Texto para indicar al usuario que inicie el proceso de captura.
+        cv2.imshow('Data Capture', frame)  # Se muestra el frame al usuario.
         if cv2.waitKey(25) == ord('q'):  # Al presionar q puede iniciarse el siguiente paso (captura).
             break
 
