@@ -5,8 +5,8 @@ DATA_DIR = './data'                 # Esta variable guarda la ruta del directori
 if not os.path.exists(DATA_DIR):    # Revisa si el directorio existe o no, de no existir.
     os.makedirs(DATA_DIR)           # Lo crea.
 
-number_of_classes = 24               # Se indica el número de clases que habrán. 3 por el momento.
-dataset_size = 500                  # Se indica el tamaño de muestras para cada clase.
+number_of_classes = 3               # Se indica el número de clases que habrán. 3 por el momento.
+dataset_size = 100                  # Se indica el tamaño de muestras para cada clase.
 
 cap = cv2.VideoCapture(1)           # Se crea un objeto para capturar video de la cámara. 1 es el índice según OS.
 for j in range(number_of_classes):  # Se recorre de 0 a 3-1.
