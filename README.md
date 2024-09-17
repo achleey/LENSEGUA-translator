@@ -37,7 +37,7 @@ Here's an overview of the project's file structure:
     - **`train_classifier.py`**: Trains a machine learning model on extracted hand landmark data and saves the trained model for later use.
     - **`inference_classifier.py`**: Continuously captures video frames, processes them to detect hand signs, and displays the recognized sign on the video feed.
 
-- **`Own-Data`**: This folder is organized into subfolders to categorize the signs into different groups, facilitating data management and optimization. The subfolders are:
+- **`Own-Data`** and **`Volunteers-Data`**: This folders are organized into subfolders to categorize the signs into different groups, facilitating data management and optimization. The first one is used for a self portrait type of image colection and the second one is used for a volunteer type of image collection. The subfolders are:
     - **`1Hand`**: Contains data and optimized baseline files for signs performed with one hand.
         - **`collect_imgs_1Hand.py`**: Facilitates the collection of 16 different sets of labeled image data, each set corresponding to a specific class.
         - **`create_dataset_1Hand.py`**: Extracts hand landmark coordinates, pads sequences to ensure consistent length, and stores the processed data and labels.
@@ -54,4 +54,4 @@ Here's an overview of the project's file structure:
         - **`collect_imgs_HandAndBody.py`**: Facilitates the collection of one set of labeled image data, corresponding to a specific class.
         - **`create_dataset_2Hands.py`**: Extracts hand and body landmark coordinates, pads sequences to ensure consistent length, and stores the processed data and labels.
         - **`train_classifier.py`**: Trains a Random Forest classifier on hand and body landmark data, evaluates its performance and saves the trained model for future use.
-      
+    - DISCLAIMER: the files **`draw_xxx`** are only included in the **`Volunteers-Data`** folder. This script reads images from a specified directory, applies hand landmark detection, and visualizes the results. 
