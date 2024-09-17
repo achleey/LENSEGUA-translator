@@ -5,7 +5,7 @@ This project aims to develop a comprehensive desktop application for translating
 
 Table of Contents
 
-- Features
-- System Requirements
-- Repository Structure
-- Dependencies
+- [Features](#features)
+- [System Requirements](#system-requirements)
+- [Repository Structure](#repository-structure)
+- [Dependencies](#dependencies)
