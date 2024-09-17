@@ -65,7 +65,13 @@ Here's an overview of the project's file structure:
     - **`audio`**: Contains audio files reproduced when audio translation is selected. 
     - **`ModelXXXP.p`** and **`ModelXXXV.p`**: Pre-trained models for each sign category in each image colection.
     - **`gui.py`**: Integrates the real-time video capture, processes it to detect hand signs, and classifies these signs using pre-trained models. It displays real-time translations in text and provides audio playback for each sign. Users can toggle the visibility of detected landmarks (hands, face, pose) with switches on the interface.
-    - **`Other files`**: images used in the user interface. 
+    - **`Other files`**: images used in the user interface.
+ 
+## Dependencies
+
+The project depends on multiple Python modules, you can find the libraries and packages you need in **`requirements.txt`**.
+
+
 
 
 
