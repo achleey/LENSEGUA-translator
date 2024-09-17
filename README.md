@@ -32,5 +32,9 @@ This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with mac
 Here's an overview of the project's file structure:
 
 - **`Baseline`**: Contains base files sourced from [this GitHub repository](https://github.com/computervisioneng/sign-language-detector-python), which were initially used for testing the project and later adapted to meet specific project needs. Here’s a breakdown of the contents:
-    - **`collect_imgs.py`**: This file captures and saves images from a camera and categorizes them in different folders.
-    - **`create_dataset.py`**:
+    - **`collect_imgs.py`**: Facilitates the collection of labeled image data.
+    - **`create_dataset.py`**: Prepares datasets where hand landmarks need to be extracted from images and stored for machine learning or other analysis.
+    - **`train_classifier.py`**: Trains a machine learning model on extracted hand landmark data and saves the trained model for later use.
+    - **`inference_classifier.py`**: Continuously captures video frames, processes them to detect hand signs, and displays the recognized sign on the video feed.
+
+- **`Own-Data`**: 
