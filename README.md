@@ -19,3 +19,10 @@ Table of Contents
 - Customizable Translation Options: Allows users to toggle features such as the visibility of landmarks and translation modes, adapting the application to different user needs and preferences.
 - Text and Audio Output: Provides translation of detected signs into both text and audio. This feature allows users to see the translated sign language and hear its corresponding audio representation, enhancing communication accessibility.
 - Open Source Integration: Incorporates elements from [this GitHub repository](https://github.com/computervisioneng/sign-language-detector-python), adapting and customizing existing solutions to fit the specific requirements of LENSEGUA. This includes optimizing data handling, feature extraction, and real-time classification techniques.
+
+## System requirements
+
+This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
+
+- Python 3.1
+- PyCharm 2024.1 (Professional Edition). Another IDE can be utilized as long as the migration process is done correctly. 
