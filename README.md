@@ -24,5 +24,5 @@ Table of Contents
 
 This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
 
-- Python 3.1
+- Python 3.10
 - PyCharm 2024.1 (Professional Edition). Another IDE can be utilized as long as the migration process is done correctly. 
