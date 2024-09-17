@@ -25,4 +25,12 @@ Table of Contents
 This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
 
 - Python 3.10
-- PyCharm 2024.1 (Professional Edition). Another IDE can be utilized as long as the migration process is done correctly. 
+- PyCharm 2024.1 (Professional Edition). Another IDE can be utilized as long as the migration process is done correctly.
+
+## Repository Structure
+
+Here's an overview of the project's file structure:
+
+- **`Baseline`**: Contains base files sourced from [this GitHub repository](https://github.com/computervisioneng/sign-language-detector-python), which were initially used for testing the project and later adapted to meet specific project needs. Here’s a breakdown of the contents:
+    - **`collect_imgs.py`**: This file captures and saves images from a camera and categorizes them in different folders.
+    - **`create_dataset.py`**:
