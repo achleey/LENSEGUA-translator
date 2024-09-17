@@ -37,4 +37,14 @@ Here's an overview of the project's file structure:
     - **`train_classifier.py`**: Trains a machine learning model on extracted hand landmark data and saves the trained model for later use.
     - **`inference_classifier.py`**: Continuously captures video frames, processes them to detect hand signs, and displays the recognized sign on the video feed.
 
-- **`Own-Data`**: 
+- **`Own-Data`**: This folder is organized into subfolders to categorize the signs into different groups, facilitating data management and optimization. The subfolders are:
+    - **`1Hand**`: Contains data and optimized baseline files for signs performed with one hand.
+        - **`collect_imgs_1Hand.py`**: Facilitates the collection of 16 different sets of labeled image data, each set corresponding to a specific class.      
+    - **`2Hands**`: Contains data and optimized baseline files for signs performed with two hands.
+        - **`collect_imgs_2Hands.py`**: Facilitates the collection of three different sets of labeled image data, each set corresponding to a specific class. 
+    - **`HandAndFace`: Contains data and optimized baseline files for signs performed with one hand and the face.
+        - **`collect_imgs_HandAndFace.py`**: Facilitates the collection of four different sets of labeled image data, each set corresponding to a specific class. 
+    - **`HandAndBody`: Contains data and optimized baseline files for signs performed with one hand and the arm.
+        - **`collect_imgs_HandAndBody.py`**: Facilitates the collection of one set of labeled image data, corresponding to a specific class.
+        - 
+      
