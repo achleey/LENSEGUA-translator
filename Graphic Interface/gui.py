@@ -12,19 +12,20 @@ import numpy as np
 import mediapipe as mp
 
 class VideoThread(QThread):
-    frame_captured = pyqtSignal(QImage)
-    result_captured = pyqtSignal(str)  # Añadir esta línea para definir la señal result_captured
+    frame_captured = pyqtSignal(QImage)        # Señal para emitir el frame capturado
+    result_captured = pyqtSignal(str)          # Señal para emitir el resultado de la predicción
 
     def __init__(self):
         super().__init__()
-        self.cap = cv2.VideoCapture(1)
-        self.running = True
+        self.cap = cv2.VideoCapture(1)        # Abrir la cámara
+        self.running = True        # Control de ejecución del hilo
 
+        # Variables para mostrar detecciones
         self.show_hands = False
         self.show_face = False
         self.show_pose = False
 
-        # Inicializar mediapipe
+        # Inicializar mediapipe para detercción de manos, cara y pose
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.5)
 
@@ -37,18 +38,19 @@ class VideoThread(QThread):
         self.mp_drawing = mp.solutions.drawing_utils
         self.mp_drawing_styles = mp.solutions.drawing_styles
 
-        # Cargar modelos y diccionarios de etiquetas
+        # Cargar modelos de predicción
         self.model1 = pickle.load(open('./Model1HandV.p', 'rb'))['model']
         self.model2 = pickle.load(open('./Model2HandsV.p', 'rb'))['model']
         self.model3 = pickle.load(open('./ModelHandAndFaceV.p', 'rb'))['model']
         self.model4 = pickle.load(open('./ModelHandAndBodyV.p', 'rb'))['model']
 
-        # Diccionario de etiquetas
+        # Diccionario de etiquetas para las predicciones
         self.labels_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'K', 6: 'L', 7: 'M', 8: 'N', 9: 'O', 10: 'P', 11: 'R', 12: 'U', 13: 'V', 14: 'W', 15: 'Y'}
         self.labels_dict2 = {0: 'Ñ', 1: 'Q', 2: 'X'}
         self.labels_dict3 = {0: 'G', 1: 'H', 2: 'I', 3: 'T'}
         self.labels_dict4 = {0: 'Z'}
 
+    # Función para verificar si la mano está cerca de la cara
     def is_hand_near_face(self, hand_landmarks, face_landmarks, threshold=0.03):
         for hand_point in hand_landmarks:
             for face_point in face_landmarks:
@@ -57,6 +59,7 @@ class VideoThread(QThread):
                     return True
         return False
 
+    # Función para verificar si la mano está en una posición horizontal
     def is_hand_horizontal(self,hand_landmarks, angle_threshold=45):
         if not hand_landmarks:
             return False
@@ -73,6 +76,7 @@ class VideoThread(QThread):
 
         return np.abs(angle) < angle_threshold or np.abs(angle - 180) < angle_threshold
 
+    # Función para verificar si el codo es visible y la mano está en posición horizontal
     def is_elbow_visible(self, pose_landmarks, hand_landmarks, pose_threshold=0.5, hand_threshold=45):
         if not pose_landmarks or not hand_landmarks:
             return False
@@ -90,13 +94,15 @@ class VideoThread(QThread):
 
         return (left_elbow_visible or right_elbow_visible) and hand_horizontal
 
+    # Hilo prinicpal que captura frames de video y realiza predicciones
     def run(self):
         while self.running:
-            ret, frame = self.cap.read()
+            ret, frame = self.cap.read()        # Capturar un frame de la cámara
             if ret:
-                frame = cv2.flip(frame, 1)
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.flip(frame, 1)        # Voltear el frame horizontalmente
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)        # Convertir el frame a formato RGB
 
+                # Procesar el frame con mediapipe para detectar manos, cara y pose
                 results_hands = self.hands.process(frame_rgb)
                 results_face = self.face.process(frame_rgb)
                 results_pose = self.pose.process(frame_rgb)
@@ -107,6 +113,7 @@ class VideoThread(QThread):
                 hand_data_aux = []
                 pose_data_aux = []
 
+                # Procesamiento de manos
                 if results_hands.multi_hand_landmarks:
                     num_hands = len(results_hands.multi_hand_landmarks)
                     for hand_landmarks in results_hands.multi_hand_landmarks:
@@ -117,6 +124,7 @@ class VideoThread(QThread):
                             hand_data_aux.append(xh)
                             hand_data_aux.append(yh)
 
+                # Procesamiento de cara
                 if results_face.multi_face_landmarks:
                     face_detected = True
                     for face_landmarks in results_face.multi_face_landmarks:
@@ -126,6 +134,7 @@ class VideoThread(QThread):
                             face_data_aux.append(xf)
                             face_data_aux.append(yf)
 
+                # Procesamiento de pose
                 if results_pose.pose_landmarks:
                     pose_data = []
                     pose_data_aux = []
@@ -141,6 +150,7 @@ class VideoThread(QThread):
 
                 predicted_character = 'Traducción...'
 
+                # Predicción de la letra en base a las manos y la cara
                 if num_hands >= 1 and face_detected:
                     if self.is_hand_near_face(results_hands.multi_hand_landmarks[0].landmark, results_face.multi_face_landmarks[0].landmark):
                         combination = hand_data_aux + face_data_aux
@@ -158,8 +168,9 @@ class VideoThread(QThread):
                     prediction = self.model4.predict([np.asarray(combinationByH)])
                     predicted_character = self.labels_dict4[int(prediction[0])]
 
-                self.result_captured.emit(predicted_character)
+                self.result_captured.emit(predicted_character)        # Emitir la traducción
 
+                # Dibujo de las detecciones de mano, cara y pose si estan habilitados
                 # Detección de manos
                 if self.show_hands:
                     if results_hands.multi_hand_landmarks:
@@ -194,11 +205,13 @@ class VideoThread(QThread):
                             self.mp_pose.POSE_CONNECTIONS,
                             self.mp_drawing_styles.get_default_pose_landmarks_style()
                         )
-
+                
+                # Enviar el frame a la interfaz
                 h, w, ch = frame_rgb.shape
                 qt_image = QImage(frame_rgb.data, w, h, ch * w, QImage.Format.Format_RGB888)
                 self.frame_captured.emit(qt_image)
 
+    # Detener el hilo de captura de video
     def stop(self):
         self.running = False
         self.cap.release()
