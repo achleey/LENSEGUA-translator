@@ -1,4 +1,4 @@
-import os
+import os        # Para manejar operaciones del sistema de archivos
 import pickle  # Para guardar los datos en formato binario
 import mediapipe as mp  # Librería de visión por computadora para detección de manos
 import cv2  # Para procesamiento de imágenes
