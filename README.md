@@ -5,11 +5,7 @@ This project aims to develop a comprehensive desktop application for translating
 
 **Table of Contents**
 
-[TOCM]
-
-[TOC]
-
-# [Features](#features)
+- [Features](#features)
 - [System Requirements](#system-requirements)
 - [Repository Structure](#repository-structure)
 - [Dependencies](#dependencies)
