@@ -1,239 +1,21 @@
-import os
-import pickle
-
-from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QGraphicsScene, QGraphicsView, \
-    QGraphicsTextItem, QGraphicsPixmapItem, QGraphicsProxyWidget
-from PyQt6.QtGui import QPixmap, QFont, QIcon, QPen, QColor, QImage
-from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QRectF, QThread, pyqtSignal, QUrl
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
-
-import cv2
-import numpy as np
-import mediapipe as mp
-
-class VideoThread(QThread):
-    frame_captured = pyqtSignal(QImage)        # Señal para emitir el frame capturado
-    result_captured = pyqtSignal(str)          # Señal para emitir el resultado de la predicción
-
-    def __init__(self):
-        super().__init__()
-        self.cap = cv2.VideoCapture(1)        # Abrir la cámara
-        self.running = True        # Control de ejecución del hilo
-
-        # Variables para mostrar detecciones
-        self.show_hands = False
-        self.show_face = False
-        self.show_pose = False
-
-        # Inicializar mediapipe para detercción de manos, cara y pose
-        self.mp_hands = mp.solutions.hands
-        self.hands = self.mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.5)
-
-        self.mp_face = mp.solutions.face_mesh
-        self.face = self.mp_face.FaceMesh()
-
-        self.mp_pose = mp.solutions.pose
-        self.pose = self.mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.3)
-
-        self.mp_drawing = mp.solutions.drawing_utils
-        self.mp_drawing_styles = mp.solutions.drawing_styles
-
-        # Cargar modelos de predicción
-        self.model1 = pickle.load(open('./Model1HandV.p', 'rb'))['model']
-        self.model2 = pickle.load(open('./Model2HandsV.p', 'rb'))['model']
-        self.model3 = pickle.load(open('./ModelHandAndFaceV.p', 'rb'))['model']
-        self.model4 = pickle.load(open('./ModelHandAndBodyV.p', 'rb'))['model']
-
-        # Diccionario de etiquetas para las predicciones
-        self.labels_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E', 5: 'K', 6: 'L', 7: 'M', 8: 'N', 9: 'O', 10: 'P', 11: 'R', 12: 'U', 13: 'V', 14: 'W', 15: 'Y'}
-        self.labels_dict2 = {0: 'Ñ', 1: 'Q', 2: 'X'}
-        self.labels_dict3 = {0: 'G', 1: 'H', 2: 'I', 3: 'T'}
-        self.labels_dict4 = {0: 'Z'}
-
-    # Función para verificar si la mano está cerca de la cara
-    def is_hand_near_face(self, hand_landmarks, face_landmarks, threshold=0.03):
-        for hand_point in hand_landmarks:
-            for face_point in face_landmarks:
-                distance = np.sqrt((hand_point.x - face_point.x) ** 2 + (hand_point.y - face_point.y) ** 2)
-                if distance < threshold:
-                    return True
-        return False
-
-    # Función para verificar si la mano está en una posición horizontal
-    def is_hand_horizontal(self,hand_landmarks, angle_threshold=45):
-        if not hand_landmarks:
-            return False
-
-        landmarks = hand_landmarks.landmark
-        wrist = landmarks[self.mp_hands.HandLandmark.WRIST]
-        index_finger_tip = landmarks[self.mp_hands.HandLandmark.INDEX_FINGER_TIP]
-        pinky_tip = landmarks[self.mp_hands.HandLandmark.PINKY_TIP]
-
-        # Calcular el ángulo de la mano respecto al eje horizontal
-        dx = index_finger_tip.x - pinky_tip.x
-        dy = index_finger_tip.y - pinky_tip.y
-        angle = np.arctan2(dy, dx) * 180 / np.pi
-
-        return np.abs(angle) < angle_threshold or np.abs(angle - 180) < angle_threshold
-
-    # Función para verificar si el codo es visible y la mano está en posición horizontal
-    def is_elbow_visible(self, pose_landmarks, hand_landmarks, pose_threshold=0.5, hand_threshold=45):
-        if not pose_landmarks or not hand_landmarks:
-            return False
-
-        # Verificar si el codo es visible
-        landmarks = pose_landmarks.landmark
-        left_elbow = landmarks[self.mp_pose.PoseLandmark.LEFT_ELBOW]
-        right_elbow = landmarks[self.mp_pose.PoseLandmark.RIGHT_ELBOW]
-
-        left_elbow_visible = left_elbow.visibility > pose_threshold
-        right_elbow_visible = right_elbow.visibility > pose_threshold
-
-        # Verificar si la mano está en posición horizontal
-        hand_horizontal = self.is_hand_horizontal(hand_landmarks, angle_threshold=hand_threshold)
-
-        return (left_elbow_visible or right_elbow_visible) and hand_horizontal
-
-    # Hilo prinicpal que captura frames de video y realiza predicciones
-    def run(self):
-        while self.running:
-            ret, frame = self.cap.read()        # Capturar un frame de la cámara
-            if ret:
-                frame = cv2.flip(frame, 1)        # Voltear el frame horizontalmente
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)        # Convertir el frame a formato RGB
-
-                # Procesar el frame con mediapipe para detectar manos, cara y pose
-                results_hands = self.hands.process(frame_rgb)
-                results_face = self.face.process(frame_rgb)
-                results_pose = self.pose.process(frame_rgb)
-
-                num_hands = 0
-                face_detected = False
-                face_data_aux = []
-                hand_data_aux = []
-                pose_data_aux = []
-
-                # Procesamiento de manos
-                if results_hands.multi_hand_landmarks:
-                    num_hands = len(results_hands.multi_hand_landmarks)
-                    for hand_landmarks in results_hands.multi_hand_landmarks:
-                        hand_data_aux = []
-                        for landmark in hand_landmarks.landmark:
-                            xh = landmark.x
-                            yh = landmark.y
-                            hand_data_aux.append(xh)
-                            hand_data_aux.append(yh)
-
-                # Procesamiento de cara
-                if results_face.multi_face_landmarks:
-                    face_detected = True
-                    for face_landmarks in results_face.multi_face_landmarks:
-                        for landmark in face_landmarks.landmark:
-                            xf = landmark.x
-                            yf = landmark.y
-                            face_data_aux.append(xf)
-                            face_data_aux.append(yf)
-
-                # Procesamiento de pose
-                if results_pose.pose_landmarks:
-                    pose_data = []
-                    pose_data_aux = []
-                    landmarks = results_pose.pose_landmarks.landmark
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.LEFT_ELBOW].x)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.LEFT_ELBOW].y)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.RIGHT_ELBOW].x)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.RIGHT_ELBOW].y)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.LEFT_SHOULDER].x)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.LEFT_SHOULDER].y)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.RIGHT_SHOULDER].x)
-                    pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.RIGHT_SHOULDER].y)
-
-                predicted_character = 'Traducción...'
-
-                # Predicción de la letra en base a las manos y la cara
-                if num_hands >= 1 and face_detected:
-                    if self.is_hand_near_face(results_hands.multi_hand_landmarks[0].landmark, results_face.multi_face_landmarks[0].landmark):
-                        combination = hand_data_aux + face_data_aux
-                        prediction = self.model3.predict([np.asarray(combination)])
-                        predicted_character = self.labels_dict3[int(prediction[0])]
-                    else:
-                        if num_hands == 1:
-                            prediction = self.model1.predict([np.asarray(hand_data_aux)])
-                            predicted_character = self.labels_dict[int(prediction[0])]
-                        else:
-                            prediction = self.model2.predict([np.asarray(hand_data_aux)])
-                            predicted_character = self.labels_dict2[int(prediction[0])]
-                if num_hands == 1 and self.is_elbow_visible(results_pose.pose_landmarks, results_hands.multi_hand_landmarks[0]):
-                    combinationByH = hand_data_aux + pose_data_aux
-                    prediction = self.model4.predict([np.asarray(combinationByH)])
-                    predicted_character = self.labels_dict4[int(prediction[0])]
-
-                self.result_captured.emit(predicted_character)        # Emitir la traducción
-
-                # Dibujo de las detecciones de mano, cara y pose si estan habilitados
-                # Detección de manos
-                if self.show_hands:
-                    if results_hands.multi_hand_landmarks:
-                        for hand_landmarks in results_hands.multi_hand_landmarks:
-                            self.mp_drawing.draw_landmarks(
-                                frame_rgb,
-                                hand_landmarks,
-                                self.mp_hands.HAND_CONNECTIONS,
-                                self.mp_drawing_styles.get_default_hand_landmarks_style(),
-                                self.mp_drawing_styles.get_default_hand_connections_style()
-                            )
-
-                # Detección de cara
-                if self.show_face:
-                    if results_face.multi_face_landmarks:
-                        for face_landmarks in results_face.multi_face_landmarks:
-                            self.mp_drawing.draw_landmarks(
-                                frame_rgb,
-                                face_landmarks,
-                                self.mp_face.FACEMESH_CONTOURS,
-                                self.mp_drawing_styles.get_default_face_mesh_tesselation_style(),
-                                self.mp_drawing_styles.get_default_face_mesh_contours_style()
-                            )
-
-                # Detección de pose
-                if self.show_pose:
-                    results_pose = self.pose.process(frame_rgb)
-                    if results_pose.pose_landmarks:
-                        self.mp_drawing.draw_landmarks(
-                            frame_rgb,
-                            results_pose.pose_landmarks,
-                            self.mp_pose.POSE_CONNECTIONS,
-                            self.mp_drawing_styles.get_default_pose_landmarks_style()
-                        )
-                
-                # Enviar el frame a la interfaz
-                h, w, ch = frame_rgb.shape
-                qt_image = QImage(frame_rgb.data, w, h, ch * w, QImage.Format.Format_RGB888)
-                self.frame_captured.emit(qt_image)
-
-    # Detener el hilo de captura de video
-    def stop(self):
-        self.running = False
-        self.cap.release()
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
         # Configurar la ventana principal
-        self.setWindowTitle("LENSEGUAtraductor")
-        self.setGeometry(100, 100, 1280, 720)
-        self.setStyleSheet("background-color: #DBE2EA;")
+        self.setWindowTitle("LENSEGUAtraductor")        # Título de la ventana
+        self.setGeometry(100, 100, 1280, 720)        # Tamaño y posición de la ventana
+        self.setStyleSheet("background-color: #DBE2EA;")        # Color de fondo
 
-        # Widget central y layout
+        # Widget central y layout para organizar los elementos
         central_widget = QWidget(self)
         layout = QVBoxLayout(central_widget)
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setContentsMargins(0, 0, 0, 0)        # Sin márgenes
         self.setCentralWidget(central_widget)
 
         # Crear una escena y vista para el canvas
         self.scene = QGraphicsScene()
-        self.view = QGraphicsView(self.scene)
+        self.view = QGraphicsView(self.scene)        # Vista para mostrar la escena
         layout.addWidget(self.view)
 
         # Desactivar barras de desplazamiento
@@ -243,17 +25,17 @@ class MainWindow(QMainWindow):
         # Asegurarse de que la vista esté alineada correctamente
         self.view.setAlignment(Qt.AlignmentFlag.AlignTop | Qt.AlignmentFlag.AlignLeft)
 
-        # Agregar un rectángulo a la escena
+        # Agregar un rectángulo a la escena como fondo para la cabecera
         self.scene.addRect(
             0.0, 0.0, 1280.0, 60.0,
-            pen=QPen(Qt.PenStyle.NoPen),
-            brush=QColor("#FFFFFF")
+            pen=QPen(Qt.PenStyle.NoPen),        # Sin borde
+            brush=QColor("#FFFFFF")        # Color de fondo blanco
         )
 
-        # Encabezado
+        # Encabezado de la aplicación
         self.add_text("LENSEGUAtraductor", 16.0, 8.0, 28, QColor("#000000"))
 
-        # Frame para inferencia
+        # Frame para inferencia del video
         self.add_image("image_4.png", 50.5, 109.8)
 
         # Obtener el tamaño de la imagen "image_4.png"
@@ -269,7 +51,7 @@ class MainWindow(QMainWindow):
         self.frame_item.setPos(96.5, 145)  # Ajustar la posición según sea necesario # MODIFICAR COORDENADAS PARA FRAME
         self.frame_item.setPixmap(QPixmap(image_4_size))  # Establecer tamaño inicial basado en image_4
 
-        # Área de traducción
+        # Área de traducción la traducción en texto
         self.add_image("image_2.png", 738.0, 313.8)
         self.add_text("Traducción a texto", 879.0, 357.8, 28, QColor("#000000"))
         self.add_image("image_3.png", 863.0, 407.8)
@@ -279,7 +61,7 @@ class MainWindow(QMainWindow):
         self.add_image("image_1.png", 738, 126.8)
         self.add_text("Opciones de traducción", 850.0, 170.8, 28, QColor("#000000"))
 
-        # Crear botones con animaciones
+        # Crear botones con animaciones para opciones de traducción
         self.text_button, anim1 = self.create_button("button_1.png", 889.5, 230.8, 90.0, 59.0, self.text_button_clicked)
         self.audio_button, anim2 = self.create_button("button_2.png", 1038.0, 230.8, 90.0, 59.0, self.audio_button_clicked)
 
@@ -290,8 +72,13 @@ class MainWindow(QMainWindow):
         # Guardar animaciones para acceso futuro
         self.animations = {self.text_button: anim1, self.audio_button: anim2}
 
+        # Habilitar los botones
         self.text_button.setEnabled(True)
         self.audio_button.setEnabled(True)
+
+        # Guardar las imágenes y el estado de los botones
+        self.text_button_images = ("button_1.png", "colored_button_1.png")
+        self.audio_button_images = ("button_2.png", "colored_button_2.png")
 
         # Bandera para indicar si se debe actualizar el texto y el audio
         self.update_text = False
@@ -302,7 +89,7 @@ class MainWindow(QMainWindow):
         self.audio_output = QAudioOutput()
         self.media_player.setAudioOutput(self.audio_output)
 
-        # Landmarks
+        # Agregar texto para mostrar los Landmarks
         self.add_text("Landmarks - manos", 80.0, 552.0, 16, QColor("#000000"))
         self.add_text("Landmarks - cara", 80.0, 602.0, 16, QColor("#000000"))
         self.add_text("Landmarks - pose", 80.0, 652.0, 16, QColor("#000000"))
@@ -310,7 +97,7 @@ class MainWindow(QMainWindow):
         # Inicializar la lista de switches
         self.switches = []
 
-        # Crear interruptores
+        # Crear interruptores para controlar la visualización de landmarks
         self.create_switch(275, 557, 'hands')
         self.create_switch(275, 607, 'face')
         self.create_switch(275, 657, 'pose')
@@ -322,6 +109,7 @@ class MainWindow(QMainWindow):
         self.video_thread.start()
 
     def add_text(self, text, x, y, font_size, color, bold=True):
+        # Crear un objeto de texto y añadirlo a la escena
         text_item = QGraphicsTextItem(text)
         font = QFont("IBM Plex Sans", font_size, QFont.Weight.Bold if bold else QFont.Weight.Normal)
         text_item.setFont(font)
@@ -331,24 +119,28 @@ class MainWindow(QMainWindow):
         return text_item
 
     def add_image(self, image_path, x, y):
+        # Cargar una imagen y añadirla a la escena 
         pixmap = QPixmap(image_path)
         item = QGraphicsPixmapItem(pixmap)
         item.setOffset(x, y)
         self.scene.addItem(item)
 
     def create_button(self, image_path, x, y, width, height, callback):
+        # Crear un botón con animación para las opciones de traducción
         button = QPushButton()
+
+        # Establecer la imagen del botón
         pixmap = QPixmap(image_path)
         icon = QIcon(pixmap)
         button.setIcon(icon)
         button.setIconSize(pixmap.size())
         button.setFixedSize(pixmap.size())
         button.setFlat(True)
-        button.clicked.connect(callback)
         button.setStyleSheet("border: none; padding: 0px; margin: 0px;")
-
+        button.clicked.connect(callback)
         button.setGeometry(int(x), int(y), int(width), int(height))
 
+        # Crear la animación del botón
         animation = QPropertyAnimation(button, b"geometry")
         animation.setDuration(100)
         animation.setStartValue(QRect(int(x), int(y), int(width), int(height)))
@@ -356,29 +148,51 @@ class MainWindow(QMainWindow):
 
         return button, animation
 
+    def set_button_image(self, button, image_path):
+        # Cambiar la imagen de un botón
+        pixmap = QPixmap(image_path)
+        icon = QIcon(pixmap)
+        button.setIcon(icon)
+        button.setIconSize(pixmap.size())
+        button.setFixedSize(pixmap.size())
+
     def text_button_clicked(self):
+        # Acción cuando se hace click en el botón de texto
         print("Text button clicked")
-        self.animate_button(self.text_button)
-        self.update_text = True  # Activar la actualización del texto
-        self.update_audio = False
+
+        if not self.update_text:
+            self.set_button_image(self.text_button, self.text_button_images[1])
+            self.set_button_image(self.audio_button, self.audio_button_images[0])
+
+            self.animate_button(self.text_button)
+            self.update_text = True  # Activar la actualización del texto
+            self.update_audio = False
 
     def audio_button_clicked(self):
+        # Acción cuando se hace click en el botón de audio
         print("Audio button clicked")
-        self.animate_button(self.audio_button)
-        self.update_text = False  # Desactivar la actualización del texto
-        self.update_audio = True
+
+        if not self.update_audio:
+            self.set_button_image(self.audio_button, self.audio_button_images[1])
+            self.set_button_image(self.text_button, self.text_button_images[0])
+
+            self.animate_button(self.audio_button)
+            self.update_text = False  # Desactivar la actualización del texto
+            self.update_audio = True
 
     def handle_result_captured(self, translation_text):
+        # Manejar los resultados de la traducción capturados (texto o audio)
         if self.update_text:
             self.update_translation(translation_text)
         if self.update_audio:
             self.play_audio(translation_text)
 
     def update_translation(self, translation_text):
+        # Actualizar el texto de la traducción en la interfaz
         self.translation_text_item.setPlainText(translation_text)
 
     def play_audio(self, translation_text):
-
+        # Reproducir audio de la traducción
         if translation_text in ['Traducción...']:
             print(f"Ignorando valor no deseado: {translation_text}")
             return
@@ -394,12 +208,14 @@ class MainWindow(QMainWindow):
             print(f"Archivo no encontrado: {audio_path}")
 
     def animate_button(self, button):
+        # Reproducir la animación del botón
         animation = self.animations[button]
         animation.setDirection(QPropertyAnimation.Direction.Forward)
         animation.finished.connect(lambda: self.reset_button_geometry(button))
         animation.start()
 
     def reset_button_geometry(self, button):
+        # Resetear la geometría de los botones después de la animación
         animation = self.animations[button]
         animation.finished.disconnect()
         animation.setDirection(QPropertyAnimation.Direction.Backward)
@@ -407,12 +223,14 @@ class MainWindow(QMainWindow):
         animation.finished.connect(lambda: self.restore_button_position(button))
 
     def restore_button_position(self, button):
+        # Asegurar que el botón se mantenga en su posición al momento de la animación
         animation = self.animations[button]
         animation.finished.disconnect()
         original_geometry = animation.startValue()
         button.setGeometry(original_geometry)
 
     def create_switch(self, x, y, switch_type):
+        # Crear interruptores
         switch_on = QPixmap("switch_on.png")
         switch_off = QPixmap("switch_off.png")
 
@@ -432,6 +250,7 @@ class MainWindow(QMainWindow):
         self.add_widget_to_scene(button_switch, x, y)
 
     def add_widget_to_scene(self, widget, x, y):
+        # Añadir widget a la ventana
         proxy = QGraphicsProxyWidget()
         proxy.setWidget(widget)
         proxy.setPos(x, y)
@@ -440,6 +259,7 @@ class MainWindow(QMainWindow):
         self.scene.addItem(proxy)
 
     def switch(self, button_switch, switch_type):
+        # Controlar imagen de switch según su estado
         if button_switch.switch_state:
             button_switch.setIcon(QIcon(button_switch.switch_off))
             button_switch.switch_state = False
@@ -451,6 +271,7 @@ class MainWindow(QMainWindow):
         self.toggle_switch(switch_type)
 
     def update_switch_size(self, button_switch):
+        # Actualizar el tamaño del switch si esta habilitado o deshabilitado
         if button_switch.switch_state:
             size = button_switch.switch_on.size()
         else:
@@ -468,6 +289,7 @@ class MainWindow(QMainWindow):
                 break
 
     def toggle_switch(self, switch_type):
+        # Habilitar o deshabilitar la visualización de landmarks según el switch activo
         if switch_type == 'hands':
             self.video_thread.show_hands = not self.video_thread.show_hands
         elif switch_type == 'face':
@@ -476,6 +298,7 @@ class MainWindow(QMainWindow):
             self.video_thread.show_pose = not self.video_thread.show_pose
 
     def update_frame(self, qt_image):
+        # Definir dimensiones para el frame de video en tiempo real
         pixmap = QPixmap.fromImage(qt_image)
 
         # Obtener el tamaño de la imagen "image_4.png"
@@ -496,6 +319,7 @@ class MainWindow(QMainWindow):
         self.frame_item.setPos(96.5, 145)  # Asegúrate de que la posición sea la correcta # MODIFICAR COORDENADAS PARA FRAME
 
     def closeEvent(self, event):
+        # Terminar evento
         self.video_thread.stop()
         self.video_thread.wait()
         super().closeEvent(event)
