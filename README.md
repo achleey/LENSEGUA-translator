@@ -7,7 +7,9 @@ This project aims to develop a comprehensive desktop application for translating
 
 [TOCM]
 
-- [Features](#features)
+[TOC]
+
+# [Features](#features)
 - [System Requirements](#system-requirements)
 - [Repository Structure](#repository-structure)
 - [Dependencies](#dependencies)
