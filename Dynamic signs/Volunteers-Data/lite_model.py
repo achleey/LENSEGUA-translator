@@ -1,4 +1,4 @@
-import tensorflow as tf
+import tensorflow as tf        # Para construir y entrenar modelos de aprendizaje profundo
 
 # Cargar el modelo entrenado
 model_path = '/Users/ashley/Desktop/Diseño e Innovación de Ingeniería 1/Tesis/Pruebas/PrimeraPrueba/Dinamicas/Propias/Prueba 1/ModelHolisticV'  # Reemplaza con la ruta a tu modelo
