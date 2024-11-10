@@ -1,50 +1,56 @@
-import os
-import pickle
-import tensorflow as tf
-import time
-import cv2
-import numpy as np
-import mediapipe as mp
+import os        # Proporciona funciones para interactuar con el sistema operativo
+import pickle        # Permite la serialización y deserialización de objetos en Python
+import tensorflow as tf        # Biblioteca de aprendizaje profundo para cargar modelos en formato TensorFlow Lite
+import time        # Biblioteca para medir el tiempo de ejecución
+import cv2        # Biblioteca OpenCV para procesamiento de imágenes y video
+import numpy as np        # Biblioteca para operaciones matemáticas y manipulaciones de matrices
+import mediapipe as mp        # Biblioteca para el procesamiento de pose, manos y rostro en video
 
-
+# Importación de módulos de PyQt6 para la creación de interfaces gráficas
 from PyQt6.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QPushButton, QGraphicsScene, QGraphicsView, \
     QGraphicsTextItem, QGraphicsPixmapItem, QGraphicsProxyWidget
-from PyQt6.QtGui import QPixmap, QFont, QIcon, QPen, QColor, QImage
-from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QRectF, QThread, pyqtSignal, QUrl
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
+from PyQt6.QtGui import QPixmap, QFont, QIcon, QPen, QColor, QImage        # Módulos de PyQt6 para gestionar gráficos y estilos
+from PyQt6.QtCore import Qt, QPropertyAnimation, QRect, QRectF, QThread, pyqtSignal, QUrl        # Módulos para propiedades y animaciones
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput        # Módulos multimedia de PyQt6 para audio y video
 
+# Clase que maneja el hilo de captura de video
 class VideoThread(QThread):
-    frame_captured = pyqtSignal(QImage)
-    result_captured = pyqtSignal(str)  # Añadir esta línea para definir la señal result_captured
+    frame_captured = pyqtSignal(QImage)        # Señal para capturar el frame
+    result_captured = pyqtSignal(str)  # Señal para capturar el resultado de la predicción
 
     def __init__(self):
         super().__init__()
-        self.cap = cv2.VideoCapture(1)
-        self.running = True
-        self.sequence = []
+        self.cap = cv2.VideoCapture(1)        # Inicialización de la captura de video (cámara)
+        self.running = True        # Bandera de control para el hilo
+        self.sequence = []        # Secuencia de frames para el análisis de acción dinámica
         self.sequence_length = 30  # Longitud de la secuencia para señas dinámicas
-        self.frame_count = 0
+        self.frame_count = 0        # Contador de frames
 
+        # Variables para el control de visibilidad de landmarks de manos, rostro y pose
         self.show_hands = False
         self.show_face = False
         self.show_pose = False
 
         # Inicializar mediapipe
+        # Manos
         self.mp_hands = mp.solutions.hands
         self.hands = self.mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.5)
 
+        # Cara
         self.mp_face = mp.solutions.face_mesh
         self.face = self.mp_face.FaceMesh()
 
+        # Pose
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(static_image_mode=False, min_detection_confidence=0.3)
 
-        self.mp_drawing = mp.solutions.drawing_utils
-        self.mp_drawing_styles = mp.solutions.drawing_styles
-
+        # Holistico
         self.mp_holistic = mp.solutions.holistic
         self.holistic = self.mp_holistic.Holistic(static_image_mode=False, min_detection_confidence=0.5,
                                         min_tracking_confidence=0.5)
+        
+        self.mp_drawing = mp.solutions.drawing_utils        # Utilidades para dibujar landmarks
+        self.mp_drawing_styles = mp.solutions.drawing_styles        # Estilos de dibujo
 
         # Cargar modelos y diccionarios de etiquetas
         self.model1 = pickle.load(open('./Model1HandV.p', 'rb'))['model']
@@ -65,6 +71,7 @@ class VideoThread(QThread):
         self.labels_dict4 = {0: 'Z'}
         self.labels_dict_dynamics = {0: 'F', 1: 'J', 2: 'S'}
 
+    # Función para comprobar si la mano está cerca del rostro
     def is_hand_near_face(self, hand_landmarks, face_landmarks, threshold=0.03):
         for hand_point in hand_landmarks:
             for face_point in face_landmarks:
@@ -73,6 +80,7 @@ class VideoThread(QThread):
                     return True
         return False
 
+    # Función para verificar si la mano está horizontal
     def is_hand_horizontal(self,hand_landmarks, angle_threshold=45):
         if not hand_landmarks:
             return False
@@ -89,6 +97,7 @@ class VideoThread(QThread):
 
         return np.abs(angle) < angle_threshold or np.abs(angle - 180) < angle_threshold
 
+    # Función para verificar si el codo es visible
     def is_elbow_visible(self, pose_landmarks, hand_landmarks, pose_threshold=0.5, hand_threshold=45):
         if not pose_landmarks or not hand_landmarks:
             return False
@@ -106,6 +115,7 @@ class VideoThread(QThread):
 
         return (left_elbow_visible or right_elbow_visible) and hand_horizontal
 
+    # Función para extraer keypoints de los resultados de mediapipe
     def extract_keypoints(self, results):
         pose = np.array([[res.x, res.y] for res in results.pose_landmarks.landmark]).flatten() if results.pose_landmarks else np.zeros(33 * 2)
         face = np.array([[res.x, res.y] for res in results.face_landmarks.landmark]).flatten() if results.face_landmarks else np.zeros(468 * 2)
@@ -113,6 +123,7 @@ class VideoThread(QThread):
         rh = np.array([[res.x, res.y] for res in results.right_hand_landmarks.landmark]).flatten() if results.right_hand_landmarks else np.zeros(21 * 2)
         return np.concatenate([pose, face, lh, rh])
 
+    # Función para predecir la acción dinámica con TensorFlow Lite
     def predict_dynamic_action(self):
         # Convertir secuencia a formato de entrada para TensorFlow Lite
         input_data = np.expand_dims(self.sequence, axis=0).astype(np.float32)
@@ -123,6 +134,7 @@ class VideoThread(QThread):
         predicted_label = self.labels_dict_dynamics[predicted_class_index]
         return predicted_label
 
+    # Función para verificar si la seña dinámica está activa
     def is_dynamic_sign_active(self, threshold=0.020, keypoints_to_track=None):
         # Asegurarse de que hay suficientes frames para detectar movimiento
         if len(self.sequence) < 2:
@@ -152,23 +164,27 @@ class VideoThread(QThread):
         return average_movement > threshold
 
     def run(self):
+        # Bucle principal para la captura de frames mientras el hilo está en ejecución
         while self.running:
-            ret, frame = self.cap.read()
+            ret, frame = self.cap.read()        # Captura un frame de la cámara
             if ret:
-                frame = cv2.flip(frame, 1)
-                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.flip(frame, 1)        # Flip para mostrar la imagen en modo espejo
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)        # Conversión a RGB
 
+                # Procesar diferentes resultados con mediapipe
                 results_hands = self.hands.process(frame_rgb)
                 results_face = self.face.process(frame_rgb)
                 results_pose = self.pose.process(frame_rgb)
                 results_holistic = self.holistic.process(frame_rgb)
 
+                # Variables auxiliares para guardar la información de las detecciones
                 num_hands = 0
                 face_detected = False
                 face_data_aux = []
                 hand_data_aux = []
                 pose_data_aux = []
 
+                # Procesar las manos
                 if results_hands.multi_hand_landmarks:
                     num_hands = len(results_hands.multi_hand_landmarks)
                     for hand_landmarks in results_hands.multi_hand_landmarks:
@@ -176,18 +192,20 @@ class VideoThread(QThread):
                         for landmark in hand_landmarks.landmark:
                             xh = landmark.x
                             yh = landmark.y
-                            hand_data_aux.append(xh)
+                            hand_data_aux.append(xh)        # Guardar coordenadas de la mano
                             hand_data_aux.append(yh)
 
+                # Procesar la cara
                 if results_face.multi_face_landmarks:
                     face_detected = True
                     for face_landmarks in results_face.multi_face_landmarks:
                         for landmark in face_landmarks.landmark:
                             xf = landmark.x
                             yf = landmark.y
-                            face_data_aux.append(xf)
+                            face_data_aux.append(xf)        # Guardar coordenadas de la cara
                             face_data_aux.append(yf)
 
+                # Procesar la pose
                 if results_pose.pose_landmarks:
                     pose_data = []
                     pose_data_aux = []
@@ -201,9 +219,9 @@ class VideoThread(QThread):
                     pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.RIGHT_SHOULDER].x)
                     pose_data_aux.append(landmarks[self.mp_pose.PoseLandmark.RIGHT_SHOULDER].y)
 
+                # Variable para la predicción
                 predicted_character = 'Traducción...'
 
-                # Procesamiento principal en cada frame
                 keypoints = self.extract_keypoints(results_holistic)  # Extraer keypoints del frame actual
 
                 # Verificar si hay landmarks en las manos en el frame actual
@@ -213,8 +231,9 @@ class VideoThread(QThread):
                 if hand_present:
                     self.sequence.append(keypoints)
 
-                self.sequence = self.sequence[-30:]
+                self.sequence = self.sequence[-30:]        # Mantener los últimos 30 frames
 
+                # Lógica de predicción basada en las manos y la cara detectadas
                 if num_hands >= 1 and face_detected:
                     if self.is_hand_near_face(results_hands.multi_hand_landmarks[0].landmark, results_face.multi_face_landmarks[0].landmark):
 
@@ -222,18 +241,20 @@ class VideoThread(QThread):
                             if len(self.sequence) == 30 and self.frame_count % 1 == 0:  # Se hace la predicción cada 30 segundos.
                                 predicted_character = self.predict_dynamic_action()  # Predecir la acción dinámica
                         else:
+                            # Combina datos de mano y cara para hacer la predicción
                             combination = hand_data_aux + face_data_aux
                             prediction = self.model3.predict([np.asarray(combination)])
                             predicted_character = self.labels_dict3[int(prediction[0])]
                     else:
-                        if num_hands == 1:
+                        # Predicción basada solo en la mano detectada
+                        if num_hands == 1:        # Si hay una mano
                             if self.is_dynamic_sign_active():
                                 if len(self.sequence) == 30 and self.frame_count % 1 == 0:  # Se hace la predicción cada 30 segundos.
                                     predicted_character = self.predict_dynamic_action()  # Predecir la acción dinámica
                             else:
                                 prediction = self.model1.predict([np.asarray(hand_data_aux)])
                                 predicted_character = self.labels_dict[int(prediction[0])]
-                        else:
+                        else:        # Si hay dos manos
                             if self.is_dynamic_sign_active():
                                 if len(self.sequence) == 30 and self.frame_count % 1 == 0:  # Se hace la predicción cada 30 segundos.
                                     predicted_character = self.predict_dynamic_action()  # Predecir la acción dinámica
@@ -241,13 +262,14 @@ class VideoThread(QThread):
                                 prediction = self.model2.predict([np.asarray(hand_data_aux)])
                                 predicted_character = self.labels_dict2[int(prediction[0])]
 
+                # Predicción basada en la visibilidad del codo
                 if num_hands == 1 and self.is_elbow_visible(results_pose.pose_landmarks, results_hands.multi_hand_landmarks[0]):
                     combinationByH = hand_data_aux + pose_data_aux
                     prediction = self.model4.predict([np.asarray(combinationByH)])
                     predicted_character = self.labels_dict4[int(prediction[0])]
 
-                self.frame_count += 1
-                self.result_captured.emit(predicted_character)
+                self.frame_count += 1        # Incrementar el contador de frames
+                self.result_captured.emit(predicted_character)        # Emitir el resultado de la predicción
 
                 # Detección de manos
                 if self.show_hands:
@@ -284,11 +306,13 @@ class VideoThread(QThread):
                             self.mp_drawing_styles.get_default_pose_landmarks_style()
                         )
 
+                # Convertir el frame procesado a formato Qt y emitir
                 h, w, ch = frame_rgb.shape
                 qt_image = QImage(frame_rgb.data, w, h, ch * w, QImage.Format.Format_RGB888)
                 self.frame_captured.emit(qt_image)
 
     def stop(self):
+        # Detener la captura de video y liberar recursos
         self.running = False
         self.cap.release()
 
@@ -298,19 +322,19 @@ class MainWindow(QMainWindow):
 
         # Configurar la ventana principal
         self.setWindowTitle("LENSEGUAtraductor")
-        self.setGeometry(100, 100, 1280, 720)
-        self.setStyleSheet("background-color: #DBE2EA;")
+        self.setGeometry(100, 100, 1280, 720)        # Tamaño y posición de la ventana
+        self.setStyleSheet("background-color: #DBE2EA;")        # Estilo de fondo
 
         # Widget central y layout
         central_widget = QWidget(self)
-        layout = QVBoxLayout(central_widget)
-        layout.setContentsMargins(0, 0, 0, 0)
-        self.setCentralWidget(central_widget)
+        layout = QVBoxLayout(central_widget)        # Layout vertical para los elementos
+        layout.setContentsMargins(0, 0, 0, 0)        # Sin márgenes
+        self.setCentralWidget(central_widget)        # Establecer el widget central
 
         # Crear una escena y vista para el canvas
         self.scene = QGraphicsScene()
-        self.view = QGraphicsView(self.scene)
-        layout.addWidget(self.view)
+        self.view = QGraphicsView(self.scene)        # Vista para mostrar la escena
+        layout.addWidget(self.view)        # Agregar vista al layout
 
         # Desactivar barras de desplazamiento
         self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -322,14 +346,14 @@ class MainWindow(QMainWindow):
         # Agregar un rectángulo a la escena
         self.scene.addRect(
             0.0, 0.0, 1280.0, 60.0,
-            pen=QPen(Qt.PenStyle.NoPen),
-            brush=QColor("#FFFFFF")
+            pen=QPen(Qt.PenStyle.NoPen),        # Sin borde
+            brush=QColor("#FFFFFF")        # Fondo blanco
         )
 
         # Encabezado
         self.add_text("LENSEGUAtraductor", 16.0, 8.0, 28, QColor("#000000"))
 
-        # Frame para inferencia
+        # Agregar imagen de fondo para el frame de inferencia
         self.add_image("image_4.png", 50.5, 109.8)
 
         # Obtener el tamaño de la imagen "image_4.png"
@@ -366,6 +390,7 @@ class MainWindow(QMainWindow):
         # Guardar animaciones para acceso futuro
         self.animations = {self.text_button: anim1, self.audio_button: anim2}
 
+        # Habilitar los botones
         self.text_button.setEnabled(True)
         self.audio_button.setEnabled(True)
 
@@ -401,6 +426,7 @@ class MainWindow(QMainWindow):
         self.video_thread.result_captured.connect(self.handle_result_captured)  # Conectar a la función manejadora
         self.video_thread.start()
 
+    # Método para agregar texto a la escena
     def add_text(self, text, x, y, font_size, color, bold=True):
         text_item = QGraphicsTextItem(text)
         font = QFont("IBM Plex Sans", font_size, QFont.Weight.Bold if bold else QFont.Weight.Normal)
@@ -410,16 +436,17 @@ class MainWindow(QMainWindow):
         self.scene.addItem(text_item)
         return text_item
 
+    # Método para agregar imágenes a la escena
     def add_image(self, image_path, x, y):
         pixmap = QPixmap(image_path)
         item = QGraphicsPixmapItem(pixmap)
         item.setOffset(x, y)
         self.scene.addItem(item)
 
+    # Crear botón con imagen, animación y acción de clic
     def create_button(self, image_path, x, y, width, height, callback):
         button = QPushButton()
 
-        #Imagen para cuando no se presiona
         pixmap = QPixmap(image_path)
         icon = QIcon(pixmap)
         button.setIcon(icon)
@@ -437,6 +464,7 @@ class MainWindow(QMainWindow):
 
         return button, animation
 
+    # Cambiar la imagen del botón
     def set_button_image(self, button, image_path):
         pixmap = QPixmap(image_path)
         icon = QIcon(pixmap)
@@ -444,6 +472,7 @@ class MainWindow(QMainWindow):
         button.setIconSize(pixmap.size())
         button.setFixedSize(pixmap.size())
 
+    # Acción cuando se hace clic en el botón de texto
     def text_button_clicked(self):
         print("Text button clicked")
 
@@ -455,6 +484,7 @@ class MainWindow(QMainWindow):
             self.update_text = True  # Activar la actualización del texto
             self.update_audio = False
 
+    # Acción cuando se hace clic en el botón de audio
     def audio_button_clicked(self):
         print("Audio button clicked")
 
@@ -466,15 +496,18 @@ class MainWindow(QMainWindow):
             self.update_text = False  # Desactivar la actualización del texto
             self.update_audio = True
 
+     # Manejar la traducción capturada
     def handle_result_captured(self, translation_text):
         if self.update_text:
             self.update_translation(translation_text)
         if self.update_audio:
             self.play_audio(translation_text)
 
+    # Actualizar la traducción en el área de texto
     def update_translation(self, translation_text):
         self.translation_text_item.setPlainText(translation_text)
 
+    # Reproducir el audio correspondiente a la traducción
     def play_audio(self, translation_text):
 
         if translation_text in ['Traducción...']:
@@ -491,71 +524,79 @@ class MainWindow(QMainWindow):
         else:
             print(f"Archivo no encontrado: {audio_path}")
 
+    # Animación de los botones
     def animate_button(self, button):
         animation = self.animations[button]
         animation.setDirection(QPropertyAnimation.Direction.Forward)
         animation.finished.connect(lambda: self.reset_button_geometry(button))
         animation.start()
 
+    # Restablece la geometría original del botón con animación hacia atrás
     def reset_button_geometry(self, button):
         animation = self.animations[button]
-        animation.finished.disconnect()
-        animation.setDirection(QPropertyAnimation.Direction.Backward)
-        animation.start()
-        animation.finished.connect(lambda: self.restore_button_position(button))
+        animation.finished.disconnect()        # Desconecta cualquier conexión previa
+        animation.setDirection(QPropertyAnimation.Direction.Backward)        # Dirección de la animación hacia atrás
+        animation.start()        # Inicia la animación
+        animation.finished.connect(lambda: self.restore_button_position(button))        # Restaura la posición después de la animación
 
+    # Restaura la geometría original del botón
     def restore_button_position(self, button):
         animation = self.animations[button]
         animation.finished.disconnect()
-        original_geometry = animation.startValue()
-        button.setGeometry(original_geometry)
+        original_geometry = animation.startValue()        # Obtiene la geometría original de la animación
+        button.setGeometry(original_geometry)        # Restaura la geometría del botón
 
+    # Crea un interruptor con imágenes para los estados "on" y "off"
     def create_switch(self, x, y, switch_type):
         switch_on = QPixmap("switch_on.png")
         switch_off = QPixmap("switch_off.png")
 
-        button_switch = QPushButton()
-        button_switch.setIcon(QIcon(switch_off))
-        button_switch.setIconSize(switch_off.size())
-        button_switch.setFixedSize(switch_off.size())
-        button_switch.setFlat(True)
-        button_switch.setStyleSheet("border: none; padding: 0px; margin: 0px; background: transparent;")
+        button_switch = QPushButton()        # Crea un botón de tipo interruptor
+        button_switch.setIcon(QIcon(switch_off))        # Establece el ícono inicial (apagado)
+        button_switch.setIconSize(switch_off.size())        # Ajusta el tamaño del ícono
+        button_switch.setFixedSize(switch_off.size())        # Establece un tamaño fijo para el botón
+        button_switch.setFlat(True)        # Elimina bordes del botón
+        button_switch.setStyleSheet("border: none; padding: 0px; margin: 0px; background: transparent;")        # Estilo sin bordes ni fondo
 
-        button_switch.switch_state = False  # Añadir atributo de estado
-        button_switch.switch_on = switch_on
-        button_switch.switch_off = switch_off
-        button_switch.clicked.connect(lambda: self.switch(button_switch, switch_type))
+        button_switch.switch_state = False  # Estado inicial del interruptor (apagado)
+        button_switch.switch_on = switch_on        # Icono del interruptor encendido
+        button_switch.switch_off = switch_off        # Icono del interruptor apagado
+        button_switch.clicked.connect(lambda: self.switch(button_switch, switch_type))        # Conecta el clic a la acción de cambio de estado
 
-        self.switches.append(button_switch)
-        self.add_widget_to_scene(button_switch, x, y)
+        self.switches.append(button_switch)        # Añade el interruptor a la lista de switches
+        self.add_widget_to_scene(button_switch, x, y)        # Añade el interruptor a la escena en la posición (x, y)
 
+    # Añade el widget a la escena en las coordenadas dadas
     def add_widget_to_scene(self, widget, x, y):
-        proxy = QGraphicsProxyWidget()
-        proxy.setWidget(widget)
-        proxy.setPos(x, y)
-        widget_size = widget.size()
-        proxy.resize(widget_size.width(), widget_size.height())
-        self.scene.addItem(proxy)
+        proxy = QGraphicsProxyWidget()        # Crea un proxy para el widget
+        proxy.setWidget(widget)        # Establece el widget en el proxy
+        proxy.setPos(x, y)        # Establece la posición del proxy
+        widget_size = widget.size()        # Obtiene el tamaño del widget
+        proxy.resize(widget_size.width(), widget_size.height())        # Redimensiona el proxy para que coincida con el tamaño del widget
+        self.scene.addItem(proxy)        # Añade el proxy a la escena
 
+    # Cambia el estado del interruptor entre "on" y "off"
     def switch(self, button_switch, switch_type):
         if button_switch.switch_state:
-            button_switch.setIcon(QIcon(button_switch.switch_off))
-            button_switch.switch_state = False
+            button_switch.setIcon(QIcon(button_switch.switch_off))        # Cambia el ícono a "off"
+            button_switch.switch_state = False        # Establece el estado a "off"
         else:
-            button_switch.setIcon(QIcon(button_switch.switch_on))
-            button_switch.switch_state = True
+            button_switch.setIcon(QIcon(button_switch.switch_on))        # Cambia el ícono a "on"
+            button_switch.switch_state = True        # Establece el estado a "on"
 
-        self.update_switch_size(button_switch)
-        self.toggle_switch(switch_type)
+        self.update_switch_size(button_switch)        # Actualiza el tamaño del interruptor según su estado
+        self.toggle_switch(switch_type)        # Llama a la función que maneja la lógica del tipo de interruptor
 
+    # Actualiza el tamaño del interruptor según su estado
     def update_switch_size(self, button_switch):
         if button_switch.switch_state:
-            size = button_switch.switch_on.size()
+            size = button_switch.switch_on.size()        # Obtiene el tamaño del ícono "on"
         else:
-            size = button_switch.switch_off.size()
+            size = button_switch.switch_off.size()        # Obtiene el tamaño del ícono "off"
 
-        button_switch.setFixedSize(size)
+        button_switch.setFixedSize(size)        # Establece el tamaño fijo del interruptor
 
+        # Ajusta la geometría del proxy manteniendo su posición
         for item in self.scene.items():
             if isinstance(item, QGraphicsProxyWidget) and item.widget() == button_switch:
                 # Obtener la posición actual del item
@@ -565,6 +606,7 @@ class MainWindow(QMainWindow):
                 item.setPos(current_pos)  # Mantener la posición actual
                 break
 
+    # Cambia el estado del interruptor correspondiente a manos, cara o pose
     def toggle_switch(self, switch_type):
         if switch_type == 'hands':
             self.video_thread.show_hands = not self.video_thread.show_hands
@@ -573,6 +615,7 @@ class MainWindow(QMainWindow):
         elif switch_type == 'pose':
             self.video_thread.show_pose = not self.video_thread.show_pose
 
+    # Actualiza el frame mostrado con una nueva imagen escalada
     def update_frame(self, qt_image):
         pixmap = QPixmap.fromImage(qt_image)
 
@@ -593,13 +636,14 @@ class MainWindow(QMainWindow):
         # Ajustar la posición si es necesario
         self.frame_item.setPos(96.5, 145)  # Asegúrate de que la posición sea la correcta # MODIFICAR COORDENADAS PARA FRAME
 
+    # Maneja el evento de cierre de la ventana
     def closeEvent(self, event):
         self.video_thread.stop()
         self.video_thread.wait()
         super().closeEvent(event)
 
 if __name__ == "__main__":
-    app = QApplication([])
-    window = MainWindow()
-    window.show()
-    app.exec()
+    app = QApplication([])        # Crea la aplicación
+    window = MainWindow()        # Crea la ventana principal
+    window.show()        # Muestra la ventana
+    app.exec()        # Ejecuta el ciclo de eventos de la aplicación
