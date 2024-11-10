@@ -1,5 +1,5 @@
-import cv2
-import os
+import cv2        # Para procesamiento de imágenes
+import os        # Para manipulación de arrays numéricos
 
 # Ruta de la carpeta principal que contiene las subcarpetas de videos
 main_folder = 'videos'
