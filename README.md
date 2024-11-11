@@ -1,3 +1,73 @@
+
+![Logo](https://media2.dev.to/dynamic/image/width=800%2Cheight=%2Cfit=scale-down%2Cgravity=auto%2Cformat=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2F75qpoqrku7bog2weyyno.jpeg)
+
+# LENSEGUA translator 🇬🇹
+
+This project aims to develop a comprehensive desktop application for translating Guatemalan Sign Language (LENSEGUA) using computer vision and machine learning. The initial version sets up the framework for real-time video processing and sign language recognition, utilizing computer vision techniques to capture and interpret signs. The application integrates machine learning models to translate detected signs into text and audio, providing an interactive and efficient translation tool. The ultimate goal is to create a robust system for translating Guatemalan Sign Language in real-time, facilitating communication and accessibility.
+
+## Table of contents
+
+- [Features](#features)
+- [System requirements](#system-requirements)
+## Features
+
+- **Real-time Sign Language Translation:** Detects and translates Guatemalan Sign Language (LENSEGUA) signs in real-time using OpenCV and Mediapipe for accurate gesture recognition..
+- **Real-time Landmark Detection:** Tracks landmarks on hands, face, and body with Mediapipe, aiding in precise sign interpretation.
+- **Integration with Machine Learning Models:** Combines Scikit-learn and TensorFlow Lite models for efficient sign recognition, optimized for real-time performance.
+- **User Interface:** Developed with PyQt6 and Figma, the interface integrates video capture, sign language detection, and translation display.
+
+    - **Customizable Options:** Lets users toggle features like landmark visibility and translation modes to suit their preferences.
+
+    - **Text and Audio Output:** Provides translated signs in both text and audio for enhanced communication accessibility.
+## 🛠 System requirements
+
+This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
+
+- Python 3.10
+- PyCharm 2024.1 (Professional Edition), or another IDE (as long as the migration process is done correctly).
+
+## Structure
+
+⚠️ **Disclaimer:**
+
+Some scripts in this project are repeated across multiple sections, as they are adapted for different use cases (e.g., signs with one hand, two hands, face, or body). These scripts may have slight variations in their functionality depending on the specific task. For clarity, the differences and organization of these files are explained in the tables below.
+
+This project is structured as follows:
+
+**01\. Baseline:** Includes original project files used as references for the development of this project.
+
+- **Static signs:** Contains code for image collection, feature extraction, training a classifier model **(RandomForest)**, and real-time prediction of static signs. The code is organized as shown in the table below:
+        
+- **Dynamic signs:** Contiene códigos para la recolección de secuencias de vídeos, extracción de características, entrenamiento de un modelo clasificador **(LSTM)** y predicción en tiempo real de señas dinámicas.
+
+    | File name | Description                | Folder usage        | Differences| 
+    | :-------- | :------------------------- | :------- |:-----------------------|
+    | `collect_imgs.py` | Collects labeled image data.| Static signs |-| 
+    | `create_dataset.py` | Creates datasets by extracting hand landmarks. | Static signs | -|
+    | `collect_sequences.py` | Captures labeled frame sequences and automatically extracts holistic landmarks | Dyamic signs |-|
+    | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Static signs, Dyamic signs |Static signs trains a RandomForest model, Dynamic trains a LSTM model.|
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # LENSEGUA translator
 <img src="https://raw.githubusercontent.com/achleey/TraductorLENSEGUA/main/src/LENSEGUA.jpeg" width="400" height = 200>
 
