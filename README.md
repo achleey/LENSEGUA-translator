@@ -114,6 +114,10 @@ This section includes resources and references that contributed to the developme
 
     - [Action Recognition Sign Language Detection - GitHub](https://github.com/nicknochnack/ActionDetectionforSignLanguage)
     - [Action Recognition Sign Language Detection - YouTube](https://www.youtube.com/watch?v=doDUihpj6ro)
+ 
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
 
 
 
