@@ -55,7 +55,7 @@ This project is structured as follows:
     | File name | Description                | Folder usage        | Differences| 
     | :-------- | :------------------------- | :----------- |:-----------------------|
     | `collect_imgs_XXX.py` | Collects labeled image data.| Own-Data (all subfolders) |For 1Hand it collects 16 different sets of labeled image data, for 2Hands it collects 3 sets, for HandAndBody it collects 1 set and for HandAndFace it collects 4 sets.| 
-    | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks from images. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, HandAndFace uses `Hands`and `FaceMesh`. It returns the dataset in a `XHandXXX.pickle` format.|
+    | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks from images. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, amd HandAndFace uses `Hands`and `FaceMesh`. It returns the dataset in a `XHandXXX.pickle` format.|
     | `draw_XXX.py` | Reads images from a specified directory, applies landmark detection, and plots said landmarks. | Volunteer-Data (all subfolders) | 1Hand and 2Hands plots hand landmarks, HandAndBody plots hand and pose landmarks, HandAndFace plots hand and face landmarks.|
     | `train_classifier.py` | Trains and evaluates a **RandomForest** classifier model for sign language prediction. | Own-Data, Volunteer-Data (all subfolders for both) | The difference consists of the `.pickle` dataset loaded for training. It returns the model in a `ModelXXX.p` format.|
 
