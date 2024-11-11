@@ -126,7 +126,7 @@ This section includes resources and references that contributed to the developme
 
 👩🏻‍💻 Author: Ashley Morales
 
-If you have any questions, please contact mor19361@uvg.edu.gt.
+If you have any questions, please contact ashleymoralesaldana@gmail.com.
  
 ## License
 
