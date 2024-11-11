@@ -96,7 +96,7 @@ This project is structured as follows:
       
 ## System requirements
 
-This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
+This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed 🛠️:
 
 - Python 3.10
 - PyCharm 2024.1 (Professional Edition), or another IDE (as long as the migration process is done correctly).
@@ -105,12 +105,12 @@ This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with mac
 
 This section includes resources and references that contributed to the development of the project:
 
-- **Static signs**:
+- 🎖️ **Static signs** :
     
     - [Sign Language Detector - GitHub](https://github.com/computervisioneng/sign-language-detector-python)
     - [Sign Language Detector - YouTube](https://www.youtube.com/watch?v=MJCSjXepaAM&t=1072s)
 
-- **Dynamic signs**:
+- 🎖️ **Dynamic signs**:
 
     - [Action Recognition Sign Language Detection - GitHub](https://github.com/nicknochnack/ActionDetectionforSignLanguage)
     - [Action Recognition Sign Language Detection - YouTube](https://www.youtube.com/watch?v=doDUihpj6ro)
