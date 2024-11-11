@@ -101,10 +101,6 @@ This project is structured as follows:
 
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/VKFGZf9meWA/0.jpg)](https://www.youtube.com/watch?v=VKFGZf9meWA)
 
-## Documentation
-
-[Documentation](https://linktodocumentation)
-
 ## System requirements
 
 This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed 🛠️:
