@@ -34,9 +34,9 @@ This project is structured as follows:
 **01\. Baseline:** Includes original project files used as references for the development of this project. For more details about the original projects refer to [Acknowledgements](#acknowledgements)
 
 
-- **Static signs:** Contains code for image collection, feature extraction, training a classifier model **(RandomForest)**, and real-time prediction of static signs.
+- **Static signs:** Contains code for image collection, feature extraction, training a classifier model and real-time prediction of static signs.
         
-- **Dynamic signs:** Contains code for video sequence collection, feature extraction, training a classifier model **(LSTM)**, and real-time prediction of dynamic signs.
+- **Dynamic signs:** Contains code for video sequence collection, feature extraction, training a classifier model and real-time prediction of dynamic signs.
 
     | File name | Description                | Folder usage        | Differences| 
     | :-------- | :------------------------- | :------- |:-----------------------|
