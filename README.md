@@ -40,7 +40,7 @@ This project is structured as follows:
 
 - **Static signs:** Contains code for image collection, feature extraction, training a classifier model **(RandomForest)**, and real-time prediction of static signs. The code is organized as shown in the table below:
         
-- **Dynamic signs:** Contiene códigos para la recolección de secuencias de vídeos, extracción de características, entrenamiento de un modelo clasificador **(LSTM)** y predicción en tiempo real de señas dinámicas.
+- **Dynamic signs:** Contains code for video sequence collection, feature extraction, training a classifier model **(LSTM)**, and real-time prediction of dynamic signs.
 
     | File name | Description                | Folder usage        | Differences| 
     | :-------- | :------------------------- | :------- |:-----------------------|
