@@ -21,7 +21,7 @@ This project aims to develop a comprehensive desktop application for translating
 
     - **Text and Audio Output:** Provides translated signs in both text and audio for enhanced communication accessibility.
       
-## 🛠 System requirements
+🛠 ## System requirements
 
 This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
 
