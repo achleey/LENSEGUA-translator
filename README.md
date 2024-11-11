@@ -114,6 +114,12 @@ This section includes resources and references that contributed to the developme
 
     - [Action Recognition Sign Language Detection - GitHub](https://github.com/nicknochnack/ActionDetectionforSignLanguage)
     - [Action Recognition Sign Language Detection - YouTube](https://www.youtube.com/watch?v=doDUihpj6ro)
+
+## Support
+
+Author: Ashley Stephanie Morales Aldana 👩🏻‍🎓
+
+If you have any questions, please contact mor19361@uvg.edu.gt.
  
 ## License
 
