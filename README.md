@@ -45,6 +45,19 @@ This project is structured as follows:
     | `collect_sequences.py` | Captures labeled frame sequences and automatically extracts holistic landmarks | Dyamic signs |-|
     | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Static signs, Dyamic signs |Static signs trains a RandomForest model, Dynamic trains a LSTM model.|
     | `inference_classifier.py` | Detects and predicts sign language in real time.  | Static signs, Dyamic signs |Static signs does simple hand detection and letter classification using a pickle-loaded model, Dynamics uses holistic detection, and TensorFlow for sequence-based predictions.|
+
+**02\. Static signs:** Consists of 2 subfolders:
+
+- **Own-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** y **`HandAndBody`**. It contains code for collecting images, extracting features using MediaPipe solutions based on the body parts used to gesture signs, and training a classifier model.
+
+- **Volunteers-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** y **`HandAndBody`**. It contains code for extracting features from existing images, plotting landmarks based on the body parts used to gesture signs, and training a classifier model. 
+
+    | File name | Description                | Folder usage        | Differences| 
+    | :-------- | :------------------------- | :------- |:-----------------------|
+    | `collect_imgs_XXX.py` | Collects labeled image data.| Used in all subfolders in Own-Data |For 1Hand it collects 16 different sets of labeled image data, for 2Hands it collects 3 sets, for HandAndBody it collects 1 set and for HandAndFace it collects 4 sets.| 
+    | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, HandAndFace uses `Hands`and `FaceMesh` |
+    | `draw_XXX.py` | Reads images from a specified directory, applies landmark detection, and plots said landmarks. | Volunteer-Data (all subfolders) | 1Hand and 2Hands plots hand landmarks, HandAndBody plots hand and pose landmarks, HandAndFace plots hand and face landmarks.|
+    | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Own-Data, Volunteer-Data (all subfolders for both) | The difference consists of the dataset loaded for training.|
       
 ## System requirements
 
