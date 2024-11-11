@@ -8,12 +8,13 @@ This project aims to develop a comprehensive desktop application for translating
 ## Table of contents
 
 - [Features](#features)
+- [Structure](#structure)
 - [System requirements](#system-requirements)
 - [Acknowledgements](#acknowledgements)
   
 ## Features
 
-- **Real-time Sign Language Translation:** Detects and translates Guatemalan Sign Language (LENSEGUA) signs in real-time using OpenCV and Mediapipe for accurate gesture recognition..
+- **Real-time Sign Language Translation:** Detects and translates Guatemalan Sign Language (LENSEGUA) in real-time using OpenCV and Mediapipe for accurate gesture recognition..
 - **Real-time Landmark Detection:** Tracks landmarks on hands, face, and body with Mediapipe, aiding in precise sign interpretation.
 - **Integration with Machine Learning Models:** Combines Scikit-learn and TensorFlow Lite models for efficient sign recognition, optimized for real-time performance.
 - **User Interface:** Developed with PyQt6 and Figma, the interface integrates video capture, sign language detection, and translation display.
@@ -21,14 +22,7 @@ This project aims to develop a comprehensive desktop application for translating
     - **Customizable Options:** Lets users toggle features like landmark visibility and translation modes to suit their preferences.
 
     - **Text and Audio Output:** Provides translated signs in both text and audio for enhanced communication accessibility.
-      
-## System requirements
-
-This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
-
-- Python 3.10
-- PyCharm 2024.1 (Professional Edition), or another IDE (as long as the migration process is done correctly).
-
+ 
 ## Structure
 
 ⚠️ **Disclaimer:**
@@ -52,6 +46,13 @@ This project is structured as follows:
     | `inference_classifier.py` | Detects and predicts sign language in real time.  | Static signs, Dyamic signs |Static signs does simple hand detection and letter classification using a pickle-loaded model, dynamics uses holistic detection, and TensorFlow for sequence-based predictions.|
 
     For more details about the original projects refer to [Acknowledgements](#acknowledgements)
+      
+## System requirements
+
+This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed:
+
+- Python 3.10
+- PyCharm 2024.1 (Professional Edition), or another IDE (as long as the migration process is done correctly).
 
 ## Acknowledgements
 
