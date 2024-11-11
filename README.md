@@ -91,20 +91,14 @@ This section includes resources and references that contributed to the developme
 
 **Table of Contents**
 
-- [Features](#features)
-- [System Requirements](#system-requirements)
+
+
 - [Repository Structure](#repository-structure)
 - [Dependencies](#dependencies)
 
 ## Repository Structure
 
 Here's an overview of the project's file structure:
-
-- **`Baseline`**: Contains base files sourced from [this GitHub repository](https://github.com/computervisioneng/sign-language-detector-python), which were initially used for testing the project and later adapted to meet specific project needs. Here’s a breakdown of the contents:
-    - **`collect_imgs.py`**: Facilitates the collection of labeled image data.
-    - **`create_dataset.py`**: Prepares datasets where hand landmarks need to be extracted from images and stored for machine learning or other analysis.
-    - **`train_classifier.py`**: Trains a machine learning model on extracted hand landmark data and saves the trained model for later use.
-    - **`inference_classifier.py`**: Continuously captures video frames, processes them to detect hand signs, and displays the recognized sign on the video feed.
 
 - **`Own-Data`** and **`Volunteers-Data`**: This folders are organized into subfolders to categorize the signs into different groups, facilitating data management and optimization. The first one is used for a self portrait type of image colection and the second one is used for a volunteer type of image collection. The subfolders are:
     - **`1Hand`**: Contains data and optimized baseline files for signs performed with one hand.
