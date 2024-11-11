@@ -117,7 +117,7 @@ This section includes resources and references that contributed to the developme
 
 ## Support
 
-Author: Ashley Stephanie Morales Aldana 👩🏻‍🎓
+Author: Ashley Morales 👩🏻‍🎓
 
 If you have any questions, please contact mor19361@uvg.edu.gt.
  
