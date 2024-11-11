@@ -71,7 +71,7 @@ This project is structured as follows:
     | `create_sequences.py` | Creates frame sequences from existing videos. | Volunteers-Data |-|
     | `create_dataset.py` | Creates datasets by extracting holistic landmarks from frame sequences. | Own-Data, Volunteer-Data|It creates a `DataHolisticX.pickle`|
     | `train_classifier.py` | Trains and evaluates a LSTM classifier model for sign language prediction.| Own-Data, Volunteer-Data| The difference consists of the `.pickle` dataset loaded for training. It returns a `ModelHolisticX` folder in a SavedModel format.|
-    | `lite_model.py` | Converts SavedModel folders in to a TensorFlow Lite model.| Own-Data, Volunteer-Data| The difference consists of the `ModelHolisticX` model loaded for converting. It returns an `actionX.tflite` model.|
+    | `lite_model.py` | Converts SavedModel folders in to a TensorFlow Lite model.| Own-Data, Volunteer-Data| The difference consists of the `ModelHolisticX` folder loaded for converting. It returns an `actionX.tflite` model.|
       
 ## System requirements
 
