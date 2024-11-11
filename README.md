@@ -71,6 +71,12 @@ Here's an overview of the project's file structure:
 
 The project depends on multiple Python modules, you can find the libraries and packages you need in **`requirements.txt`**.
 
+    | File name | Description                | Folder usage        | Differences| 
+    | :-------- | :------------------------- | :------- |:-----------------------|
+    | `collect_imgs.py` | Collects labeled image data.| Static signs ||
+    | `create_dataset.py` | Creates datasets by extracting hand landmarks. | Static signs ||
+    | `collect_sequences.py` | Captures frame sequences and automatically extracts holistic landmarks | Dyamic signs ||
+    | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Static signs, Dyamic signs |Static signs trains RandomForest, dynamic trains LSTM.|
 
 
 
