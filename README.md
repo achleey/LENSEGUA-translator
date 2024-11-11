@@ -50,7 +50,7 @@ This project is structured as follows:
 
 - **Own-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** and **`HandAndBody`**. It contains code for collecting images, extracting features using MediaPipe solutions based on the body parts used to gesture signs, and training a classifier model using self-portrait images.
 
-- **Volunteers-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** and **`HandAndBody`**. It contains code for extracting features from existing images, plotting landmarks based on the body parts used to gesture signs, and training a classifier model using different volunteers images. 
+- **Volunteers-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** and **`HandAndBody`**. It contains code for extracting features from existing volunteer images, plotting landmarks based on the body parts used to gesture signs, and training a classifier model. 
 
     | File name | Description                | Folder usage        | Differences| 
     | :-------- | :------------------------- | :----------- |:-----------------------|
