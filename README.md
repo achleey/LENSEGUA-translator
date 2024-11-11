@@ -59,7 +59,7 @@ This project is structured as follows:
     | `draw_XXX.py` | Reads images from a specified directory, applies landmark detection, and plots said landmarks. | Volunteer-Data (all subfolders) | 1Hand and 2Hands plots hand landmarks, HandAndBody plots hand and pose landmarks, and HandAndFace plots hand and face landmarks.|
     | `train_classifier.py` | Trains and evaluates a **RandomForest** classifier model for sign language prediction. | Own-Data, Volunteer-Data (all subfolders for both) | The difference consists of the `.pickle` dataset loaded for training. It returns the model in a `ModelXXX.p` format.|
 
-**03\. Dynamic signs:** Consists of two subfolders: 
+**03\. Dynamic signs:** Consists of 2 subfolders: 
 
 - **Own-Data**: Contains code for collecting video sequences as frames, extracting features using MediaPipe Holistic, training a **LSTM** classifier model and converting said model to a TensorFlow Lite format.
 
