@@ -96,8 +96,8 @@ This project is structured as follows:
 
 ## Demo
 
+[](https://www.youtube.com/watch?v=VKFGZf9meWA)
 
-      
 ## System requirements
 
 This project was developed in a Macbook Pro (Apple Silicon M1 Pro Chip) with macOS Sonoma 14.5. The following software is needed 🛠️:
