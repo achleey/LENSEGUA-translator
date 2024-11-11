@@ -9,8 +9,11 @@ This project aims to develop a comprehensive desktop application for translating
 
 - [Features](#features)
 - [Structure](#structure)
+- [Demo](#demo)
 - [System requirements](#system-requirements)
 - [Acknowledgements](#acknowledgements)
+- [Support](#support)
+- [License](#license)
   
 ## Features
 
