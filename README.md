@@ -31,7 +31,8 @@ Some scripts in this project are repeated across multiple sections, as they are 
 
 This project is structured as follows:
 
-**01\. Baseline:** Includes original project files used as references for the development of this project.
+**01\. Baseline:** Includes original project files used as references for the development of this project. For more details about the original projects refer to [Acknowledgements](#acknowledgements)
+
 
 - **Static signs:** Contains code for image collection, feature extraction, training a classifier model **(RandomForest)**, and real-time prediction of static signs. The code is organized as shown in the table below:
         
@@ -44,8 +45,6 @@ This project is structured as follows:
     | `collect_sequences.py` | Captures labeled frame sequences and automatically extracts holistic landmarks | Dyamic signs |-|
     | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Static signs, Dyamic signs |Static signs trains a RandomForest model, Dynamic trains a LSTM model.|
     | `inference_classifier.py` | Detects and predicts sign language in real time.  | Static signs, Dyamic signs |Static signs does simple hand detection and letter classification using a pickle-loaded model, dynamics uses holistic detection, and TensorFlow for sequence-based predictions.|
-
-    For more details about the original projects refer to [Acknowledgements](#acknowledgements)
       
 ## System requirements
 
