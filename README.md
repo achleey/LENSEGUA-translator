@@ -14,7 +14,7 @@ This project aims to develop a comprehensive desktop application for translating
   
 ## Features
 
-- **Real-time Sign Language Translation:** Detects and translates Guatemalan Sign Language (LENSEGUA) in real-time using OpenCV and Mediapipe for accurate gesture recognition..
+- **Real-time Sign Language Translation:** Detects and translates Guatemalan Sign Language (LENSEGUA) in real-time using OpenCV and Mediapipe for accurate gesture recognition.
 - **Real-time Landmark Detection:** Tracks landmarks on hands, face, and body with Mediapipe, aiding in precise sign interpretation.
 - **Integration with Machine Learning Models:** Combines Scikit-learn and TensorFlow Lite models for efficient sign recognition, optimized for real-time performance.
 - **User Interface:** Developed with PyQt6 and Figma, the interface integrates video capture, sign language detection, and translation display.
