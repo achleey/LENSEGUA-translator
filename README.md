@@ -111,27 +111,6 @@ This section includes resources and references that contributed to the developme
 
 ## Repository Structure
 
-Here's an overview of the project's file structure:
-
-- **`Own-Data`** and **`Volunteers-Data`**: This folders are organized into subfolders to categorize the signs into different groups, facilitating data management and optimization. The first one is used for a self portrait type of image colection and the second one is used for a volunteer type of image collection. The subfolders are:
-    - **`1Hand`**: Contains data and optimized baseline files for signs performed with one hand.
-        - **`collect_imgs_1Hand.py`**: Facilitates the collection of 16 different sets of labeled image data, each set corresponding to a specific class.
-        - **`create_dataset_1Hand.py`**: Extracts hand landmark coordinates, pads sequences to ensure consistent length, and stores the processed data and labels.
-        - **`train_classifier.py`**: Trains a Random Forest classifier on hand landmark data, evaluates its performance and saves the trained model for future use.
-    - **`2Hands`**: Contains data and optimized baseline files for signs performed with two hands.
-        - **`collect_imgs_2Hands.py`**: Facilitates the collection of three different sets of labeled image data, each set corresponding to a specific class.
-        - **`create_dataset_2Hands.py`**: Extracts hand landmark coordinates, pads sequences to ensure consistent length, and stores the processed data and labels.
-        - **`train_classifier.py`**: Trains a Random Forest classifier on hand landmark data, evaluates its performance and saves the trained model for future use.
-    - **`HandAndFace`**: Contains data and optimized baseline files for signs performed with one hand and the face.
-        - **`collect_imgs_HandAndFace.py`**: Facilitates the collection of four different sets of labeled image data, each set corresponding to a specific class.
-        - **`create_dataset_HandAndFace.py`**: Extracts hand and face landmark coordinates, pads sequences to ensure consistent length, and stores the processed data and labels.
-        - **`train_classifier.py`**: Trains a Random Forest classifier on hand and face landmark data, evaluates its performance and saves the trained model for future use.
-    - **`HandAndBody`**: Contains data and optimized baseline files for signs performed with one hand and the arm.
-        - **`collect_imgs_HandAndBody.py`**: Facilitates the collection of one set of labeled image data, corresponding to a specific class.
-        - **`create_dataset_2Hands.py`**: Extracts hand and body landmark coordinates, pads sequences to ensure consistent length, and stores the processed data and labels.
-        - **`train_classifier.py`**: Trains a Random Forest classifier on hand and body landmark data, evaluates its performance and saves the trained model for future use.
-    - DISCLAIMER: the files **`draw_xxx.py`** are only included in the **`Volunteers-Data`** folder. This script reads images from a specified directory, applies hand landmark detection, and visualizes the results. 
-
 - **`Inference`**: Contains the trained models used in the first approach into the real time LENSEGUA translation.
     - **`ModelXXXP.p`** and **`ModelXXXV.p`**: Pre-trained models for each sign category in each image colection.
     - **`inference_classifier.py`**: Performs real-time hand, face, and body landmark detection and classifies hand gestures based on different combinations of hand, face, and body landmarks. The predictions are made using pre-trained models, and results are displayed on a video feed.
