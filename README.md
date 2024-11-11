@@ -44,7 +44,7 @@ This project is structured as follows:
     | `create_dataset.py` | Creates datasets by extracting hand landmarks. | Static signs | -|
     | `collect_sequences.py` | Captures labeled frame sequences and automatically extracts holistic landmarks | Dyamic signs |-|
     | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Static signs, Dyamic signs |Static signs trains a RandomForest model, Dynamic trains a LSTM model.|
-    | `inference_classifier.py` | Detects and predicts sign language in real time.  | Static signs, Dyamic signs |Static signs does simple hand detection and letter classification using a pickle-loaded model, dynamics uses holistic detection, and TensorFlow for sequence-based predictions.|
+    | `inference_classifier.py` | Detects and predicts sign language in real time.  | Static signs, Dyamic signs |Static signs does simple hand detection and letter classification using a pickle-loaded model, Dynamics uses holistic detection, and TensorFlow for sequence-based predictions.|
       
 ## System requirements
 
