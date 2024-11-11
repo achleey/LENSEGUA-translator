@@ -48,7 +48,7 @@ This project is structured as follows:
 
 **02\. Static signs:** Consists of 2 subfolders:
 
-- **Own-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** y **`HandAndBody`**. It contains code for collecting images, extracting features using MediaPipe solutions based on the body parts used to gesture signs, and training a classifier model.
+- **Own-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** and **`HandAndBody`**. It contains code for collecting images, extracting features using MediaPipe solutions based on the body parts used to gesture signs, and training a classifier model.
 
 - **Volunteers-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** y **`HandAndBody`**. It contains code for extracting features from existing images, plotting landmarks based on the body parts used to gesture signs, and training a classifier model. 
 
