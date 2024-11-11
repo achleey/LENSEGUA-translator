@@ -53,6 +53,20 @@ This project is structured as follows:
 
     For more details about the original projects refer to [Acknowledgements](#acknowledgements)
 
+## Acknowledgements
+
+This section includes resources and references that contributed to the development of the project:
+
+- **Static signs**:
+    
+    - [Sign Language Detector - GitHub](https://github.com/computervisioneng/sign-language-detector-python)
+    - [Sign Language Detector - YouTube](https://www.youtube.com/watch?v=MJCSjXepaAM&t=1072s)
+
+- **Dynamic signs**:
+
+    - [Action Recognition Sign Language Detection - GitHub](https://github.com/nicknochnack/ActionDetectionforSignLanguage)
+    - [Action Recognition Sign Language Detection - YouTube](https://www.youtube.com/watch?v=doDUihpj6ro)
+
 
 
 
