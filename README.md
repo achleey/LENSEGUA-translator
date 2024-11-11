@@ -42,8 +42,8 @@ This project is structured as follows:
     | :-------- | :------------------------- | :------- |:-----------------------|
     | `collect_imgs.py` | Collects labeled image data.| Static signs |-| 
     | `create_dataset.py` | Creates datasets by extracting hand landmarks from images. | Static signs | -|
-    | `collect_sequences.py` | Captures labeled frame sequences and automatically extracts holistic landmarks | Dyamic signs |-|
-    | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction  | Static signs, Dyamic signs |Static signs trains a RandomForest model, Dynamic trains a LSTM model.|
+    | `collect_sequences.py` | Captures labeled frame sequences and automatically extracts holistic landmarks. | Dyamic signs |-|
+    | `train_classifier.py` | Trains and evaluates a classifier model for sign language prediction.  | Static signs, Dyamic signs |Static signs trains a RandomForest model, Dynamic trains a LSTM model.|
     | `inference_classifier.py` | Detects and predicts sign language in real time.  | Static signs, Dyamic signs |Static signs does simple hand detection and letter classification using a pickle-loaded model, Dynamics uses holistic detection, and TensorFlow for sequence-based predictions.|
 
 **02\. Static signs:** Consists of 2 subfolders:
@@ -55,9 +55,9 @@ This project is structured as follows:
     | File name | Description                | Folder usage        | Differences| 
     | :-------- | :------------------------- | :----------- |:-----------------------|
     | `collect_imgs_XXX.py` | Collects labeled image data.| Own-Data (all subfolders) |For 1Hand it collects 16 different sets of labeled image data, for 2Hands it collects 3 sets, for HandAndBody it collects 1 set and for HandAndFace it collects 4 sets.| 
-    | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks from images. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, HandAndFace uses `Hands`and `FaceMesh`. It returns the dataset in a `XHandXXX.pickle` format|
+    | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks from images. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, HandAndFace uses `Hands`and `FaceMesh`. It returns the dataset in a `XHandXXX.pickle` format.|
     | `draw_XXX.py` | Reads images from a specified directory, applies landmark detection, and plots said landmarks. | Volunteer-Data (all subfolders) | 1Hand and 2Hands plots hand landmarks, HandAndBody plots hand and pose landmarks, HandAndFace plots hand and face landmarks.|
-    | `train_classifier.py` | Trains and evaluates a **RandomForest** classifier model for sign language prediction  | Own-Data, Volunteer-Data (all subfolders for both) | The difference consists of the `.pickle` dataset loaded for training. It returns the model in a `ModelXXX.p`|
+    | `train_classifier.py` | Trains and evaluates a **RandomForest** classifier model for sign language prediction. | Own-Data, Volunteer-Data (all subfolders for both) | The difference consists of the `.pickle` dataset loaded for training. It returns the model in a `ModelXXX.p` format.|
       
 ## System requirements
 
