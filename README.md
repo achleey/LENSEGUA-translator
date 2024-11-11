@@ -89,6 +89,10 @@ This project is structured as follows:
   | :-------- | :------------------------- |
   | `gui_static.py` |  Runs the graphic interface performing only static sign language translation.| 
   | `gui_complete.py` |  Runs the graphic interface performing both static and dynamic sign language translation.|
+
+**Additional files:**
+
+- **`requirements.txt`**: This file contains a list of all the dependencies required to run the project.
       
 ## System requirements
 
