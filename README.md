@@ -72,6 +72,16 @@ This project is structured as follows:
     | `create_dataset.py` | Creates datasets by extracting holistic landmarks from frame sequences. | Own-Data, Volunteer-Data|It creates a `DataHolisticX.pickle`|
     | `train_classifier.py` | Trains and evaluates a LSTM classifier model for sign language prediction.| Own-Data, Volunteer-Data| The difference consists of the `.pickle` dataset loaded for training. It returns a `ModelHolisticX` folder in a SavedModel format.|
     | `lite_model.py` | Converts SavedModel folders in to a TensorFlow Lite model.| Own-Data, Volunteer-Data| The difference consists of the `ModelHolisticX` folder loaded for converting. It returns an `actionX.tflite` model.|
+
+**04\. Real time inference**: Consists of 2 subfolders:
+
+- **Static inference:** Contains code for real-time detection and prediction of static signs, along with the pre-trained **RandomForest** models used for predictions.
+
+- **Dynamic inference:** Contains code for real-time detection and prediction of dynamic signs, along with the pre-trained **LSTM** TensorFlow Lite models used for predictions.
+
+    | File name | Description                | Folder usage        | Differences| 
+    | :-------- | :------------------------- | :------- |:-----------------------|
+    | `inference_classifier.py` | Detects and predicts sign language in real time.| Static inference, Dynamic inference | The difference consists on the models loaded for prediction.| 
       
 ## System requirements
 
