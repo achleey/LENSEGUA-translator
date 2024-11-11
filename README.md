@@ -96,7 +96,7 @@ This project is structured as follows:
 
 ## Demo
 
-[](https://www.youtube.com/watch?v=VKFGZf9meWA)
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=VKFGZf9meWA)
 
 ## System requirements
 
