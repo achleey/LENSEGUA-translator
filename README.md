@@ -58,6 +58,20 @@ This project is structured as follows:
     | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks from images. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, HandAndFace uses `Hands`and `FaceMesh`. It returns the dataset in a `XHandXXX.pickle` format.|
     | `draw_XXX.py` | Reads images from a specified directory, applies landmark detection, and plots said landmarks. | Volunteer-Data (all subfolders) | 1Hand and 2Hands plots hand landmarks, HandAndBody plots hand and pose landmarks, HandAndFace plots hand and face landmarks.|
     | `train_classifier.py` | Trains and evaluates a **RandomForest** classifier model for sign language prediction. | Own-Data, Volunteer-Data (all subfolders for both) | The difference consists of the `.pickle` dataset loaded for training. It returns the model in a `ModelXXX.p` format.|
+
+**03\. Dynamic signs:** Consists of two subfolders: 
+
+- **Own-Data**: Contains code for collecting video sequences as frames, extracting features using MediaPipe Holistic, training a **LSTM** classifier model and converting said model to a TensorFlow Lite format.
+
+- **Volunteers-Data**: Contains code for converting existing videos into frame sequences, extracting features using MediaPipe Holistic, training a **LSTM** classifier model and converting said model to a TensorFlow Lite format.
+
+    | File name | Description                | Folder usage        | Differences| 
+    | :-------- | :------------------------- | :------- |:-----------------------|
+    | `collect_sequences.py` | Captures labeled frame sequences.| Own-Data |-| 
+    | `create_sequences.py` | Creates frame sequences from existing videos. | Volunteers-Data |-|
+    | `create_dataset.py` | Creates datasets by extracting holistic landmarks from frame sequences. | Own-Data, Volunteer-Data|It creates a `DataHolisticX.pickle`|
+    | `train_classifier.py` | Trains and evaluates a LSTM classifier model for sign language prediction.| Own-Data, Volunteer-Data| The difference consists of the `.pickle` dataset loaded for training. It returns a `ModelHolisticX` folder in a SavedModel format.|
+    | `lite_model.py` | Converts the previous model trained in to a TensorFlow Lite format.| Own-Data, Volunteer-Data| The difference consists of the `ModelHolisticX` model loaded for converting. It returns an `actionX.tflite` model.|
       
 ## System requirements
 
