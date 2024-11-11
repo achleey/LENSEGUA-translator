@@ -53,7 +53,7 @@ This project is structured as follows:
 - **Volunteers-Data**: It consists of 4 subfolders: **`1Hand`**, **`2Hands`**, **`HandAndFace`** and **`HandAndBody`**. It contains code for extracting features from existing images, plotting landmarks based on the body parts used to gesture signs, and training a classifier model using different volunteers images. 
 
     | File name | Description                | Folder usage        | Differences| 
-    | :-------- | :------------------------- | :--------- |:-----------------------|
+    | :-------- | :------------------------- | :----------- |:-----------------------|
     | `collect_imgs_XXX.py` | Collects labeled image data.| Own-Data (all subfolders) |For 1Hand it collects 16 different sets of labeled image data, for 2Hands it collects 3 sets, for HandAndBody it collects 1 set and for HandAndFace it collects 4 sets.| 
     | `create_dataset_XXX.py` | Creates datasets by extracting specific landmarks. | Own-Data, Volunteer-Data (all subfolders for both) | 1Hand and 2Hands use `Hands`, HandAndBody uses `Hands` and `Pose`, HandAndFace uses `Hands`and `FaceMesh` |
     | `draw_XXX.py` | Reads images from a specified directory, applies landmark detection, and plots said landmarks. | Volunteer-Data (all subfolders) | 1Hand and 2Hands plots hand landmarks, HandAndBody plots hand and pose landmarks, HandAndFace plots hand and face landmarks.|
