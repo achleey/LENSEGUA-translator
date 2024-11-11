@@ -83,7 +83,7 @@ This project is structured as follows:
     | :-------- | :------------------------- | :------- |:-----------------------|
     | `inference_classifier.py` | Detects and predicts sign language in real time.| Static inference, Dynamic inference | The difference consists on the models loaded for prediction and the type of signs (static or dynamic) translated.|
 
-**05\. Graphic interface:** Contains the code to run a graphic interface that enables sign language translation to text and audio, as well as optional visualization of landmarks in real time. It also includes the trained models, images, fonts, and audio files used in the interface.
+**05\. Graphic interface:** Contains the code to run a graphic interface that enables sign language translation to text and audio, as well as optional visualization of landmarks in real time. It also includes trained models, images, fonts, and audio files used in the interface.
 
   | File name | Description                |
   | :-------- | :------------------------- |
