@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleExecutable</key>
+	<string>Traductor LENSEGUA</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
+	<key>CFBundleName</key>
+	<string>Traductor LENSEGUA</string>
+	<key>CFBundleDisplayName</key>
+	<string>Traductor LENSEGUA</string>
+	<key>CFBundleVersion</key>
+	<string></string>
+	<key>CFBundleShortVersionString</key>
+	<string></string>
+	<key>CFBundleGetInfoString</key>
+	<string></string>
+
+	<!-- Agregar la descripción del uso de la cámara -->
+    	<key>NSCameraUsageDescription</key>
+    	<string>Esta aplicación necesita acceso a la cámara para funcionar correctamente.</string>
+	<key>AVCaptureDeviceTypeContinuityCamera</key>
+    	<string>Esta aplicación utiliza la cámara de continuidad para mejorar la calidad del video.</string>
+	<key>NSMicrophoneUsageDescription</key>
+    	<string>Esta aplicación necesita acceso al micrófono para poder grabar audio.</string>
+
+    	<!-- Ruta de Python dentro del paquete -->
+    	<key>PyRuntimeLocations</key>
+    	<array>
+       		<string>/Users/ashley/Desktop/Diseño e Innovación de Ingeniería 1/Tesis/Pruebas/PrimeraPrueba/.venv/bin/python</string>
+   	</array>
+
+</dict>
+</plist>
