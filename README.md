@@ -93,7 +93,7 @@ This project is structured as follows:
   | `gui_static.py` |  Runs the graphic interface performing only static sign language translation.| 
   | `gui_complete.py` |  Runs the graphic interface performing both static and dynamic sign language translation.|
 
-**06\. App development:** Contains the code to package a Python application for macOS in Alias mode. This prototype is not built for distribution.
+**06\. App development:** This folder contains the code to package a Python application for macOS in Alias mode. Note that this prototype is not intended for distribution. The contents of this folder should be executed alongside the graphic interface resources. 
 
   | File name | Description                |
   | :-------- | :------------------------- |
