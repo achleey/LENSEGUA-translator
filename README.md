@@ -93,6 +93,15 @@ This project is structured as follows:
   | `gui_static.py` |  Runs the graphic interface performing only static sign language translation.| 
   | `gui_complete.py` |  Runs the graphic interface performing both static and dynamic sign language translation.|
 
+**06\. App development:** Contains the code to package a Python application for macOS in Alias mode. This prototype is not built for distribution.
+
+  | File name | Description                |
+  | :-------- | :------------------------- |
+  | `setup.py` |  Defines the application, its dependencies, resources, and configuration options to create a standalone macOS application bundle.| 
+  | `Info.plist` | Defines the app's metadata, including its name, version, bundle identifier, system requirements, and permissions like camera and microphone access.|
+  | `app.png` | Icon image in PNG format.|
+  | `app.icns` | Icon image in icns format, compatible with macOS.|
+
 **Additional files:**
 
 - **`requirements.txt`**: This file contains a list of all the dependencies required to run the project.
@@ -107,7 +116,7 @@ This project is structured as follows:
   
 [![Dynamic Signs](https://img.youtube.com/vi/kzNIpRGYnkI/0.jpg)](https://www.youtube.com/watch?v=kzNIpRGYnkI)
 
-- Prototipe: Desktop App
+- Prototype: Desktop App
   
 [![Desktop App](https://img.youtube.com/vi/vn-zZjlV7BI/0.jpg)](https://www.youtube.com/watch?v=vn-zZjlV7BI)
 
