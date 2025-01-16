@@ -99,8 +99,14 @@ This project is structured as follows:
 
 ## Demo
 
+- Static Signs
 [![Static Signs](https://img.youtube.com/vi/VKFGZf9meWA/0.jpg)](https://www.youtube.com/watch?v=VKFGZf9meWA)
+
+- Dynamic Signs
 [![Dynamic Signs](https://img.youtube.com/vi/kzNIpRGYnkI/0.jpg)](https://www.youtube.com/watch?v=kzNIpRGYnkI)
+
+- Prototipe: Desktop App
+[![Desktop App](https://img.youtube.com/vi/vn-zZjlV7BI/0.jpg)](https://www.youtube.com/watch?v=vn-zZjlV7BI)
 
 ## System requirements
 
