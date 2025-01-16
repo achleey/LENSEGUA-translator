@@ -99,7 +99,8 @@ This project is structured as follows:
 
 ## Demo
 
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/VKFGZf9meWA/0.jpg)](https://www.youtube.com/watch?v=VKFGZf9meWA)
+[![Static Signs](https://img.youtube.com/vi/VKFGZf9meWA/0.jpg)](https://www.youtube.com/watch?v=VKFGZf9meWA)
+[![Dynamic Signs](https://img.youtube.com/vi/kzNIpRGYnkI/0.jpg)](https://www.youtube.com/watch?v=kzNIpRGYnkI)
 
 ## System requirements
 
